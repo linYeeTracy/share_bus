@@ -8,9 +8,8 @@ export default new Router({
         {
             path: '/',
             redirect: '/login'
-        },
-        {
-            path: '/readme',
+        }, {
+            path: '/index',
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
                 {
@@ -18,40 +17,39 @@ export default new Router({
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
                 },
                 {
-                    path: '/basetable',
-                    component: resolve => require(['../components/page/BaseTable.vue'], resolve)
+                    path: '/viewBusLine',
+                    component: resolve => require(['../components/page/ViewBusLine.vue'], resolve)
                 },
                 {
-                    path: '/vuetable',
-                    component: resolve => require(['../components/page/VueTable.vue'], resolve)     // vue-datasource组件
+                    path: '/customBusLine',
+                    component: resolve => require(['../components/page/CustomBusLine.vue'], resolve)     // vue-datasource组件
                 },
                 {
-                    path: '/baseform',
+                    path: '/busRoute',
                     component: resolve => require(['../components/page/BaseForm.vue'], resolve)
                 },
                 {
-                    path: '/vueeditor',
+                    path: '/staffManage',
                     component: resolve => require(['../components/page/VueEditor.vue'], resolve)    // Vue-Quill-Editor组件
                 },
                 {
-                    path: '/markdown',
+                    path: '/chargeRecord',
                     component: resolve => require(['../components/page/Markdown.vue'], resolve)     // Vue-Quill-Editor组件
                 },
-                {
-                    path: '/upload',
-                    component: resolve => require(['../components/page/Upload.vue'], resolve)       // Vue-Core-Image-Upload组件
-                },
-                {
-                    path: '/basecharts',
-                    component: resolve => require(['../components/page/BaseCharts.vue'], resolve)   // vue-schart组件
-                },
-                {
-                    path: '/drag',
-                    component: resolve => require(['../components/page/DragList.vue'], resolve)    // 拖拽列表组件
-                }
+                // {
+                //     path: '/upload',
+                //     component: resolve => require(['../components/page/Upload.vue'], resolve)       // Vue-Core-Image-Upload组件
+                // },
+                // {
+                //     path: '/basecharts',
+                //     component: resolve => require(['../components/page/BaseCharts.vue'], resolve)   // vue-schart组件
+                // },
+                // {
+                //     path: '/drag',
+                //     component: resolve => require(['../components/page/DragList.vue'], resolve)    // 拖拽列表组件
+                // }
             ]
-        },
-        {
+        }, {
             path: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },

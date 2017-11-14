@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <div class="logo">后台管理系统</div>
+        <div class="logo"><i class="logo-icon"></i>雅高班线定制</div>
         <div class="user-info">
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
@@ -8,6 +8,7 @@
                     {{username}}
                 </span>
                 <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="personal">个人设置</el-dropdown-item>
                     <el-dropdown-item command="loginout">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -51,6 +52,15 @@
         float: left;
         width:250px;
         text-align: center;
+    }
+    .header .logo .logo-icon {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        vertical-align: middle;
+        margin-right: 10px;
+        background: url('../../../static/img/backend-icon.png') no-repeat;
+        background-size: 100%;
     }
     .user-info {
         float: right;
