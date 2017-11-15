@@ -26,10 +26,14 @@ module.exports = {
       resolve('node_modules')
     ],
     alias: {
-      'vue$': 'vue/dist/vue.common.js',
-      'src': resolve('src'),
-      'assets': resolve('src/assets'),
-      'components': resolve('src/components')
+      'vue$': 'vue/dist/vue.common.js',           // 
+      'src': resolve('src'),                      // 
+      'assets': resolve('src/assets'),            // 主题，字体等静态资源
+      'components': resolve('src/components'),    // 全局公用组件
+      'api': resolve('src/api'),                  // 所有请求
+      'utils': resolve('src/utils'),              // 全局公用方法
+      'store': resolve('src/store'),              // 全局store管理
+      'router': resolve('src/router')             // 路由
     }
   },
   module: {

@@ -11,8 +11,9 @@ import "babel-polyfill";
 
 Vue.use(ElementUI);
 Vue.use(BaiduMap, {   // 引入百度地图
-    ak: 'YOUR_APP_KEY'
-  })
+    ak: 'WB3qq0MsfpF51nZNa296By4IXfkr71z6'
+})
+
 Vue.prototype.$axios = axios;
 
 new Vue({

@@ -1,9 +1,9 @@
 <template>
-    <div class="table">
+    <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-menu"></i> 班线管理</el-breadcrumb-item>
-                <el-breadcrumb-item>查看班线</el-breadcrumb-item>
+                <el-breadcrumb-item>定制班线</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="handle-box">
@@ -15,30 +15,15 @@
             <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
-        <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="date" label="日期" sortable width="150">
-            </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="address" label="地址" :formatter="formatter">
-            </el-table-column>
-            <el-table-column label="操作" width="180">
-                <template slot-scope="scope">
-                    <el-button size="small"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="pagination">
-            <el-pagination
-                    @current-change ="handleCurrentChange"
-                    layout="prev, pager, next"
-                    :total="1000">
-            </el-pagination>
-        </div>
+
+        <baidu-map class="bm-view" :center="center" :zoom="zoom" :scroll-wheel-zoom="scrollZoom" @ready="handler">
+            <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
+            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+
+         
+            <bm-local-search :keyword="keyword" :auto-viewport="true" :location="location"></bm-local-search>
+        </baidu-map>
     </div>
 </template>
 
@@ -53,7 +38,13 @@
                 select_cate: '',
                 select_word: '',
                 del_list: [],
-                is_search: false
+                is_search: false,
+
+                center: '南京市新街口',
+                zoom: 15,
+                scrollZoom: true,
+                location: '南京',
+                keyword: '新街口'
             }
         },
         created(){
@@ -63,6 +54,7 @@
             data(){
                 const self = this;
                 return self.tableData.filter(function(d){
+                    console.log(d);
                     let is_del = false;
                     for (let i = 0; i < self.del_list.length; i++) {
                         if(d.name === self.del_list[i].name){
@@ -123,6 +115,18 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+            },
+            // 地图相关
+            handler ({BMap, map}) {
+                console.log(BMap, map)
+                this.center = '南京市新街口'
+                this.zoom = 15
+            },
+            infoWindowClose () {
+                this.show = false
+            },
+            infoWindowOpen () {
+                this.show = true
             }
         }
     }
@@ -138,5 +142,9 @@
 .handle-input{
     width: 300px;
     display: inline-block;
+}
+.bm-view {
+  width: 100%;
+  height: 800px;
 }
 </style>

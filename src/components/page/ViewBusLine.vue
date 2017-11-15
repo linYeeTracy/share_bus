@@ -17,18 +17,19 @@
         </div>
         <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="date" label="日期" sortable width="150">
-            </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="address" label="地址" :formatter="formatter">
-            </el-table-column>
-            <el-table-column label="操作" width="180">
+            <el-table-column prop="id" label="班线id" sortable width="150"></el-table-column>
+            <el-table-column prop="name" label="班线名称" width="120"></el-table-column>
+            <el-table-column prop="carries" label="承运人" :formatter="formatter" width="120"></el-table-column>
+            <el-table-column prop="carriesContact" label="承运人联系方式" sortable width="180"></el-table-column>
+            <el-table-column prop="busType" label="车型/颜色" width="120"></el-table-column>
+            <el-table-column prop="startTime" label="发车时间" :formatter="formatter" width="120"></el-table-column>
+            <el-table-column prop="startStation" label="起始站点" sortable width="150"></el-table-column>
+            <el-table-column prop="endStation" label="终止站点" width="120"></el-table-column>
+            <el-table-column prop="stationNum" label="站点总数" :formatter="formatter" width="120"></el-table-column>
+
+            <el-table-column label="站点" width="180">
                 <template slot-scope="scope">
-                    <el-button size="small"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">查看站点信息</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -62,23 +63,25 @@
         computed: {
             data(){
                 const self = this;
-                return self.tableData.filter(function(d){
-                    let is_del = false;
-                    for (let i = 0; i < self.del_list.length; i++) {
-                        if(d.name === self.del_list[i].name){
-                            is_del = true;
-                            break;
-                        }
-                    }
-                    if(!is_del){
-                        if(d.address.indexOf(self.select_cate) > -1 && 
-                            (d.name.indexOf(self.select_word) > -1 ||
-                            d.address.indexOf(self.select_word) > -1)
-                        ){
-                            return d;
-                        }
-                    }
-                })
+                // return self.tableData.filter(function(d){
+                //     console.log(d)
+                //     let is_del = false;
+                //     for (let i = 0; i < self.del_list.length; i++) {
+                //         if(d.name === self.del_list[i].name){
+                //             is_del = true;
+                //             break;
+                //         }
+                //     }
+                //     if(!is_del){
+                //         if(d.address.indexOf(self.select_cate) > -1 && 
+                //             (d.name.indexOf(self.select_word) > -1 ||
+                //             d.address.indexOf(self.select_word) > -1)
+                //         ){
+                //             return d;
+                //         }
+                //     }
+                // })
+                return self.tableData;
             }
         },
         methods: {
@@ -89,9 +92,11 @@
             getData(){
                 let self = this;
                 if(process.env.NODE_ENV === 'development'){
-                    self.url = '/ms/table/list';
+                    // self.url = '/ms/busline';
+                    self.url = './static/vuetable.json';
                 };
-                self.$axios.post(self.url, {page:self.cur_page}).then((res) => {
+                self.$axios.get(self.url, {page:self.cur_page}).then((res) => {
+                    console.log(res.data.list)
                     self.tableData = res.data.list;
                 })
             },
