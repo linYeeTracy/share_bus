@@ -30,11 +30,11 @@ export default new Router({
                 },
                 {
                     path: '/staffManage',
-                    component: resolve => require(['../components/page/VueEditor.vue'], resolve)    // Vue-Quill-Editor组件
+                    component: resolve => require(['../components/page/staffManage.vue'], resolve)    // Vue-Quill-Editor组件
                 },
                 {
                     path: '/chargeRecord',
-                    component: resolve => require(['../components/page/Markdown.vue'], resolve)     // Vue-Quill-Editor组件
+                    component: resolve => require(['../components/page/chargeRecord.vue'], resolve)     // Vue-Quill-Editor组件
                 },
                 // {
                 //     path: '/upload',

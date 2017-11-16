@@ -7,23 +7,40 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+            <el-button type="primary" icon="delete" class="handle-del mr10" @click="beginCustom">开始定制</el-button>
             <el-select v-model="select_cate" placeholder="筛选省份" class="handle-select mr10">
                 <el-option key="1" label="广东省" value="广东省"></el-option>
                 <el-option key="2" label="湖南省" value="湖南省"></el-option>
+                
             </el-select>
-            <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
-            <el-button type="primary" icon="search" @click="search">搜索</el-button>
+            <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input mr10"></el-input>
+                <el-button type="primary" icon="search" @click="search">搜索</el-button>
+            
         </div>
+        <div class="map-container">
+            <div class="custom-wrap"></div>
+            <baidu-map class="bm-view" :center="center" :zoom="zoom" :location="location" :scroll-wheel-zoom="scrollZoom" @ready="handler">
+                <bm-local-search 
+                    :keyword="keyword" 
+                    :auto-viewport="true" 
+                    :location="location" 
+                    class="search-cont"
+                    pageCapacity="5"
+                    @markersset="markersset"
+                    @infohtmlset="infohtmlset"
+                    @resultshtmlset="resultshtmlset"
+                    @searchcomplete="searchcomplete"></bm-local-search>
+                <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
+                <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
-        <baidu-map class="bm-view" :center="center" :zoom="zoom" :scroll-wheel-zoom="scrollZoom" @ready="handler">
-            <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
-            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-
-         
-            <bm-local-search :keyword="keyword" :auto-viewport="true" :location="location"></bm-local-search>
-        </baidu-map>
+                <bm-marker :position="{lng: 116.404, lat: 39.915}" :dragging="true">
+                    <bm-context-menu>
+                        <bm-context-menu-item :callback="getPosition" text="获取坐标"></bm-context-menu-item>
+                    </bm-context-menu>
+                </bm-marker>
+            </baidu-map>
+        </div>
+        
     </div>
 </template>
 
@@ -39,12 +56,13 @@
                 select_word: '',
                 del_list: [],
                 is_search: false,
+                show_custom: false,
 
                 center: '南京市新街口',
                 zoom: 15,
                 scrollZoom: true,
                 location: '南京',
-                keyword: '新街口'
+                keyword: '',
             }
         },
         created(){
@@ -102,6 +120,9 @@
             handleDelete(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');
             },
+            beginCustom() {
+
+            },
             delAll(){
                 const self = this,
                     length = self.multipleSelection.length;
@@ -127,7 +148,21 @@
             },
             infoWindowOpen () {
                 this.show = true
-            }
+            },
+            markersset() {
+                console.log(arguments);
+            },
+            infohtmlset(e) {
+                e.marker.Cb.content = '嘻嘻';
+                console.log(e.marker.Cb.content);
+                
+            },
+            resultshtmlset() {
+                console.log(arguments);
+            },
+            searchcomplete() {
+                console.log(arguments);
+            },
         }
     }
 </script>
@@ -144,7 +179,20 @@
     display: inline-block;
 }
 .bm-view {
-  width: 100%;
+  width: 70%;
   height: 800px;
+  margin-right: 30%;
+}
+.custom-wrap {
+    width: 30%;
+    float: right;
+    padding: 10px;
+    height: 100%;
+}
+.search-cont {
+    position: absolute;
+    top: 160px;
+    left: 48px;
+    width: 270px;
 }
 </style>

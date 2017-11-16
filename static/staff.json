@@ -1,0 +1,31 @@
+{
+    "list": [{
+        "id": "x3134",
+        "name": "张三",
+        "department": "移动事业部",
+        "contact": "1313333344",
+        "busline": "l_1",
+        "balance": "100.00"
+    },{
+        "id": "x3134",
+        "name": "张三",
+        "department": "移动事业部",
+        "contact": "1313333344",
+        "busline": "l_1",
+        "balance": "100.00"
+    },{
+        "id": "x3134",
+        "name": "张三",
+        "department": "移动事业部",
+        "contact": "1313333344",
+        "busline": "l_1",
+        "balance": "100.00"
+    },{
+        "id": "x3134",
+        "name": "张三",
+        "department": "移动事业部",
+        "contact": "1313333344",
+        "busline": "l_1",
+        "balance": "100.00"
+    }]
+}
