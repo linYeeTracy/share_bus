@@ -52,6 +52,7 @@
             dragendEvent(ev) {
                 ev.target.style.backgroundColor = '#fff';
                 ev.preventDefault();
+                console.log(this.data1)
             },
             dragenterEvent(ev) {
                 const self = this;

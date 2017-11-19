@@ -38,7 +38,11 @@ module.exports = {
             '/ms':{
                 target: 'https://www.easy-mock.com/mock/5a0be5dc18895717df6041fc',
                 changeOrigin: true
-            }
+            },
+            '/baidu-api':{
+                target: 'http://api.map.baidu.com',
+                changeOrigin: true
+            },
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

@@ -34,7 +34,7 @@ export default new Router({
                 },
                 {
                     path: '/chargeRecord',
-                    component: resolve => require(['../components/page/chargeRecord.vue'], resolve)     // Vue-Quill-Editor组件
+                    component: resolve => require(['../components/page/DragList.vue'], resolve)     // Vue-Quill-Editor组件
                 },
                 // {
                 //     path: '/upload',

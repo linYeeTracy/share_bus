@@ -18,14 +18,34 @@
             
         </div>
         <div class="map-container">
-            <div class="custom-wrap"></div>
+            <div class="custom-wrap">
+                <div style="">
+                    <el-table :data="stations" border style="width: 100%" ref="stationtable">
+                        <el-table-column type="selection"></el-table-column>
+                        <el-table-column prop="name" label="站点名称">
+                        </el-table-column>
+                        <el-table-column prop="desc" label="站点备注">
+                        </el-table-column>
+
+                        <el-table-column label="操作" width="180">
+                            <template slot-scope="scope">
+                                <el-button size="small"
+                                        @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                                <el-button size="small" type="danger"
+                                        @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
             <baidu-map class="bm-view" :center="center" :zoom="zoom" :location="location" :scroll-wheel-zoom="scrollZoom" @ready="handler">
                 <bm-local-search 
+                    :selectFirstResult='true'
+                    :panel='false'
                     :keyword="keyword" 
                     :auto-viewport="true" 
                     :location="location" 
                     class="search-cont"
-                    pageCapacity="5"
                     @markersset="markersset"
                     @infohtmlset="infohtmlset"
                     @resultshtmlset="resultshtmlset"
@@ -33,14 +53,57 @@
                 <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
                 <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
-                <bm-marker :position="{lng: 116.404, lat: 39.915}" :dragging="true">
-                    <bm-context-menu>
-                        <bm-context-menu-item :callback="getPosition" text="获取坐标"></bm-context-menu-item>
-                    </bm-context-menu>
+                <bm-marker v-for="(station, index) in stations" :key="index" index="index" :position="station.pointer" :dragging="true" 
+                    @dragend="dragend">
+                    <bm-label :content="station.name" :labelStyle="{color: 'red', fontSize : '18px'}" :offset="{width: -35, height: 30}"/>
                 </bm-marker>
+                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="2" :editing="true"></bm-polyline>
+                <!-- <bm-marker :position="{lng: 116.404, lat: 39.915}" :dragging="true">
+                    <bm-context-menu>
+                        <bm-context-menu-item :callback="createStation" text="在此处创建站点"></bm-context-menu-item>
+                    </bm-context-menu>
+                </bm-marker> -->
+                <bm-context-menu>
+                    <bm-context-menu-item :callback="createStation" text="在此处创建站点"></bm-context-menu-item>
+                </bm-context-menu>
             </baidu-map>
         </div>
         
+        <el-dialog 
+            title="新增站点"
+            :visible.sync="newStationDialog"
+            width="30%"
+            :before-close="handleClose">
+            
+            <div class="form-box">
+                <el-form ref="form" :model="form" label-width="80px">
+                    <el-form-item label="站点名称">
+                        <el-input :value="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="站点描述">
+                        <el-input :value="form.desc"></el-input>
+                    </el-form-item>
+                    <el-form-item label="站点经度">
+                        <el-input :value="form.pointer.lng"></el-input>
+                    </el-form-item>
+                    <el-form-item label="站点维度">
+                        <el-input :value="form.pointer.lat"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选择项">
+                        <el-select :value="form.chooce" placeholder="请选择">
+                            <el-option key="bbk" label="选项1" value="option1"></el-option>
+                            <el-option key="xtc" label="选项2" value="option2"></el-option>
+                            <el-option key="imoo" label="选项3" value="option3"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="newStationDialog = false">取 消</el-button>
+                <el-button type="primary" @click="newStationReady">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -57,12 +120,20 @@
                 del_list: [],
                 is_search: false,
                 show_custom: false,
-
+                stations: [],
+ 
+                newStationDialog: false,
                 center: '南京市新街口',
                 zoom: 15,
                 scrollZoom: true,
                 location: '南京',
                 keyword: '',
+                ak: 'WB3qq0MsfpF51nZNa296By4IXfkr71z6',
+                form: {
+                    name: '',
+                    desc: '',
+                    pointer: {}
+                }
             }
         },
         created(){
@@ -89,6 +160,18 @@
                         }
                     }
                 })
+            },
+            linePath() {
+                var self = this;
+                var linePathArr = [];
+
+                console.log(self.stations)
+                this.$lodash.each(self.stations, (n, i) => {
+                    console.log(n, i)
+                    linePathArr.push(n.pointer);
+                })
+                console.log(linePathArr)
+                return linePathArr;
             }
         },
         methods: {
@@ -149,8 +232,16 @@
             infoWindowOpen () {
                 this.show = true
             },
-            markersset() {
-                console.log(arguments);
+            markersset(e) {
+                var self = this;
+                console.log(e)
+                // for(let i =0;i<e.length;i++){
+                // $(e[i].marker.U).click(function(){
+                //     self.position.lng=e[i].point.lng;
+                //     self.position.lat=e[i].point.lat;
+                //     $('#bdcoordval').val(self.position.lng+","+self.position.lat);
+                // });
+                // }
             },
             infohtmlset(e) {
                 e.marker.Cb.content = '嘻嘻';
@@ -163,11 +254,45 @@
             searchcomplete() {
                 console.log(arguments);
             },
+            createStation(e) {
+                this.newStationDialog = true;
+                this.form.pointer = {
+                    lng: e.point.lng,
+                    lat: e.point.lat
+                }
+            },
+            dragend(e) {
+                console.log(e.target)
+                let currPos = e.point;
+                // let getLocUrl = `/baidu-api/geocoder/v2/?callback=renderReverse&location=${currPos.lat},${currPos.lng}&output=json&pois=1&ak=${this.ak}`
+                // this.$axios.get(getLocUrl).then((res) => {
+                //     console.log(res)
+                // })
+
+            },
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => {});
+            },
+            onSubmit() {
+                this.$message.success('提交成功！');
+            },
+            newStationReady(e) {
+                let station = this.$refs.form.model;
+                this.stations.push(station);
+                this.$refs.form.resetFields();
+                this.newStationDialog = false;
+
+            }
         }
     }
 </script>
 
 <style scoped>
+
 .handle-box{
     margin-bottom: 20px;
 }
@@ -179,12 +304,11 @@
     display: inline-block;
 }
 .bm-view {
-  width: 70%;
-  height: 800px;
-  margin-right: 30%;
+  height: 600px;
+  margin-right: 420px;
 }
 .custom-wrap {
-    width: 30%;
+    width: 400px;
     float: right;
     padding: 10px;
     height: 100%;
