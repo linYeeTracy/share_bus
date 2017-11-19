@@ -78,23 +78,16 @@
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px">
                     <el-form-item label="站点名称">
-                        <el-input :value="form.name"></el-input>
+                        <el-input v-model="form.name"></el-input>
                     </el-form-item>
                     <el-form-item label="站点描述">
-                        <el-input :value="form.desc"></el-input>
+                        <el-input v-model="form.desc"></el-input>
                     </el-form-item>
                     <el-form-item label="站点经度">
-                        <el-input :value="form.pointer.lng"></el-input>
+                        <el-input v-model="form.pointer.lng"></el-input>
                     </el-form-item>
                     <el-form-item label="站点维度">
-                        <el-input :value="form.pointer.lat"></el-input>
-                    </el-form-item>
-                    <el-form-item label="选择项">
-                        <el-select :value="form.chooce" placeholder="请选择">
-                            <el-option key="bbk" label="选项1" value="option1"></el-option>
-                            <el-option key="xtc" label="选项2" value="option2"></el-option>
-                            <el-option key="imoo" label="选项3" value="option3"></el-option>
-                        </el-select>
+                        <el-input v-model="form.pointer.lat"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -244,15 +237,13 @@
                 // }
             },
             infohtmlset(e) {
-                e.marker.Cb.content = '嘻嘻';
-                console.log(e.marker.Cb.content);
-                
+                e.marker.Cb.content = '嘻嘻';                
             },
             resultshtmlset() {
-                console.log(arguments);
+
             },
             searchcomplete() {
-                console.log(arguments);
+
             },
             createStation(e) {
                 this.newStationDialog = true;
@@ -260,15 +251,10 @@
                     lng: e.point.lng,
                     lat: e.point.lat
                 }
+                console.log(this.form.pointer)
             },
             dragend(e) {
-                console.log(e.target)
                 let currPos = e.point;
-                // let getLocUrl = `/baidu-api/geocoder/v2/?callback=renderReverse&location=${currPos.lat},${currPos.lng}&output=json&pois=1&ak=${this.ak}`
-                // this.$axios.get(getLocUrl).then((res) => {
-                //     console.log(res)
-                // })
-
             },
             handleClose(done) {
                 this.$confirm('确认关闭？')
@@ -281,7 +267,15 @@
                 this.$message.success('提交成功！');
             },
             newStationReady(e) {
-                let station = this.$refs.form.model;
+                let station = {
+                    name: this.$refs.form.model.name,
+                    desc: this.$refs.form.model.desc,
+                    pointer: {
+                        lng: this.$refs.form.model.pointer.lng,
+                        lat: this.$refs.form.model.pointer.lat,
+                    }
+                };
+
                 this.stations.push(station);
                 this.$refs.form.resetFields();
                 this.newStationDialog = false;
