@@ -65,10 +65,11 @@ module.exports = {
       }
     ]
   },
-    // plugins: [
-    //     new webpack.DllReferencePlugin({
-    //       context: path.resolve(__dirname, '..'),
-    //       manifest: require('./vendor-manifest.json')
-    //     })
-    // ]
+  plugins: [// 3. 配置全局使用 jquery
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      jquery: "jquery",
+      "window.jQuery": "jquery"
+  })],
 }

@@ -2,34 +2,21 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-menu"></i> 乘车管理</el-breadcrumb-item>
-                <el-breadcrumb-item>员工管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-menu"></i> 充值</el-breadcrumb-item>
+                <el-breadcrumb-item>充值记录</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <el-button type="primary" icon="add" class="handle-del mr10" @click="addStaff">增加</el-button>
-            <el-button type="primary" icon="delete" class="handle-del mr10" @click="delStaff">删除</el-button>
-            
-            <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
+            <el-button type="primary" icon="add" class="handle-del mr10" @click="recharge">充值</el-button>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
         <el-table :data="staffData" border style="width: 100%" 
             max-height="800"
-            ref="staffTable">
+            ref="rechargeTable">
             <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="id" label="工号"></el-table-column>
-            <el-table-column prop="name" label="姓名"></el-table-column>
-            <el-table-column prop="department" label="部门"></el-table-column>
-            <el-table-column prop="contact" label="联系方式"></el-table-column>
-            <el-table-column prop="busline" label="班线"></el-table-column>
-            <el-table-column prop="balance" label="余额"></el-table-column>
-
-            <el-table-column label="操作" fixed="right">
-                <template slot-scope="scope">
-                    <el-button size="small" @click="recharge(scope.$index, scope.row, scope.store)">信息修改</el-button>
-                    <el-button size="small" @click="managebalance(scope.$index, scope.row, scope.store)">余额管理</el-button>
-                </template>
-            </el-table-column>
+            <el-table-column prop="order_time" label="充值日期"></el-table-column>
+            <el-table-column prop="order_num" label="充值流水号"></el-table-column>
+            <el-table-column prop="order_amount" label="充值金额"></el-table-column>
         </el-table>
 
         <!-- 点击查看站点的弹出框 -->
@@ -59,10 +46,11 @@
         data() {
             return {
                 company_id: 'c_1',
-                staffUrl: './static/staff.json',
-                staffData: [],
+                rechargeUrl: './static/recharge.json',
+                rechargeData: [],
                 cur_page: 1,
                 cur_pageSize: 10,
+                money: 100,
                 multipleSelection: [],
                 select_cate: '',
                 select_word: '',
@@ -73,7 +61,16 @@
             }
         },
         created(){
-            this.getStaffData();
+            this.getRechargeData();
+
+        },
+        mounted() {
+
+            this.money < 200 && this.$notify({
+                title: '警告',
+                message: '这是一条警告的提示消息',
+                type: 'warning'
+            });
         },
         computed: {
             // staffData(){
@@ -119,13 +116,13 @@
             //         self.tableData = res.data.list;
             //     })
             // },
-            getStaffData(line_id) {
+            getRechargeData(company_id) {
                 let self = this;
                 if(process.env.NODE_ENV === 'development'){
-                    self.staffUrl = './static/staff.json';
+                    self.staffUrl = './static/recharge.json';
                 };
-                this.$axios.get(self.staffUrl, {id: line_id}).then((res) => {
-                    self.staffData = res.data.list; 
+                this.$axios.get(self.staffUrl, {id: company_id}).then((res) => {
+                    self.rechargeData = res.data.list; 
                 })
             },
             search(){
