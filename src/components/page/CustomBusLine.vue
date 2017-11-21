@@ -1,7 +1,8 @@
 <template>
     <div> 
         <div class="add-new-busline" @click="confirmLine">
-            确认添加
+            <i class="addline-icon"></i>
+            <p>确认添加</p>
         </div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
@@ -10,13 +11,11 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <el-select v-model="select_province" placeholder="筛选地区" @change="areaChange" class="handle-select mr10">
+            <el-select v-model="selectCity" placeholder="筛选地区" @change="areaChange" class="handle-select">
                 <el-option key="1" label="南京市" value="南京市"></el-option>
                 <el-option key="2" label="上海市" value="上海市"></el-option>     
             </el-select>
-            <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input mr10"></el-input>
-            <el-button type="primary" icon="search" @click="search">搜索</el-button>
-            
+            <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input"></el-input>
         </div>
         <div class="map-container">
             <div class="stations-wrapper">
@@ -46,32 +45,36 @@
                     @infohtmlset="infohtmlset"
                     @resultshtmlset="resultshtmlset"
                     @searchcomplete="searchcomplete"></bm-local-search>
-                <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
+
                 <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
-                <bm-marker v-for="(station, index) in stations" 
+                <bm-marker v-for="(station, index) in stations"
                     :key="index" :title="station.name" 
-                    :icon="{url: './../../assets/station.png', size: {width: 30, height: 30}}" 
+                    :icon="{url: '../../../static/img/station.png', size: {width: 30, height: 30}}" 
                     :position="station.pointer" 
                     :dragging="true" 
                     @dragging="dragging(index, $event)"
                     @dragend="dragend">
-                    <bm-label :content="station.name" :labelStyle="{color: 'red', fontSize : '18px'}" :offset="{width: -35, height: 30}"/>
+                    <bm-label :content="station.name" 
+                        :labelStyle="{fontSize:'14px',border:'0',background:'#324157',color:'#fff',fontWeight:'500',borderRadius:'5px',padding:'2px 10px'}" 
+                        :offset="{height: 32}"/>
+                    <!-- 标注的右键操作，待定 -->
                     <!-- <bm-context-menu>
                         <bm-context-menu-item :callback="editStation(index)" text="编辑站点"></bm-context-menu-item>
                         <bm-context-menu-item :callback="delStation(index)" text="删除站点"></bm-context-menu-item>
                     </bm-context-menu> -->
                 </bm-marker>
-                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="2"></bm-polyline>
+                
                 <bm-context-menu>
-                    <bm-context-menu-item :callback="createStation" text="在此处创建站点"></bm-context-menu-item>
+                    <bm-context-menu-item :callback="createStation" text="创建站点"></bm-context-menu-item>
                 </bm-context-menu>
                 <!-- <bm-driving start="{lng:118.763733,lat:32.058028}" end="{lng:118.819212, lat:32.058824}" :auto-viewport="true" location="南京"></bm-driving> -->
                 <!-- <bm-driving v-if="stations.length" start="startStation.name" end="endStation.name" :auto-viewport="true" location="location"></bm-driving> -->
+                <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="3"></bm-polyline>
             </baidu-map>
         </div>
         <!-- 编辑站点信息 -->
-        <!-- <el-dialog 
+        <el-dialog 
             title="编辑站点信息"
             :visible.sync="editStationDialog"
             width="20%"
@@ -91,7 +94,7 @@
                 <el-button @click="editStationDialog = false">取 消</el-button>
                 <el-button type="primary" @click="editStationDialog = false">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
         <!-- 新增站点 -->
         <el-dialog 
             title="新增站点"
@@ -149,45 +152,40 @@
     export default {
         data() {
             return {
-                select_province: '南京市',
+                selectCity: '南京市',
                 location: '南京',
                 center: '南京市新街口',
                 zoom: 15,
-                url: './static/vuetable.json',
-                tableData: [],
-                cur_page: 1,
-                multipleSelection: [],
-                select_cate: '',
-                select_word: '',
-                del_list: [],
-                is_search: false,
-                show_custom: false,
-                stations: [],
- 
-                addStationDialog: false,
-                
                 scrollZoom: true,
-                
-                keyword: '',
-
-                form: {
+                keyword: '',                            // 地点查询关键字
+                stations: [                             // 新增站点集合
+                    // {
+                    //     name: '1',
+                    //     desc: '1',
+                    //     pointer: {
+                    //         lng: 118.769338,
+                    //         lat: 32.048112
+                    //     }
+                    // }
+                ],
+                addStationDialog: false,                // 新增站点窗口开关
+                busLineAttrDialog: false,               // 班线属性编辑窗口开关
+                editStationDialog: false,               // 站点信息编辑窗口开关
+                form: {                                 // 新增站点窗口表单数据
                     name: '',
                     desc: '',
                     pointer: {}
                 },
-                // 班线属性编辑弹窗
-                busLineAttrDialog: false,
-                busLineAttrForm: {
+                busLineAttrForm: {                      // 班线属性编辑窗口开关
                     isShare: '',
                     maxCarryNum: ''
-                },
-                // 站点信息编辑
-                editStationDialog: false,
-                currStation: {
+                },                                              
+                
+                currStation: {                          // 当前操作站点
                     name: '',
                     desc: ''
                 },
-                currStation_index: 0
+                currStation_index: 0                    // 当前操作站点索引
             }
         },
         created(){
@@ -228,6 +226,9 @@
             },
             endStation() {
                 this.stations.length ? this.stations[this.stations - 1] : null;
+            },
+            currStation() {
+                return stations[currStation_index];
             }
         },
         methods: {
@@ -252,10 +253,6 @@
                 };
                 this.stations.push(station);
                 this.addStationDialog = false;
-            },
-            handleCurrentChange(val){
-                this.cur_page = val;
-                this.getData();
             },
 
             // 站点拖拽事件
@@ -291,20 +288,6 @@
             },
             delStation(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');
-            },
-            delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
             },
            
             infoWindowClose () {
@@ -343,11 +326,12 @@
                 let currPos = e.point;
             },
             handleClose(done) {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        done();
-                    })
-                    .catch(_ => {});
+                done();
+                // this.$confirm('确认关闭？')
+                //     .then(_ => {
+                //         done();
+                //     })
+                //     .catch(_ => {});
             },
             onSubmit() {
                 this.$message.success('提交成功！');
@@ -430,7 +414,17 @@
     top: 90px;
     right: 50px;
     background: #20a0ff;
+    box-shadow: 0 0 5px 3px #20a0ff;
 }
+.add-new-busline .addline-icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: url('../../../static/img/add-line.png') no-repeat;
+    background-size: 100%;
+    margin: 0 auto;
+}
+
 /* // .BMap_contextMenu {
 //     >div {
 //         padding: 6px!important;
