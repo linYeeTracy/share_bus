@@ -1,6 +1,6 @@
 import axios from 'axios'
-import store from './store'
-import router from './router'
+import store from 'src/store/index.js'
+import router from 'src/router'
 
 //设置全局axios默认值
 axios.defaults.timeout = 5000; //5000的超时验证

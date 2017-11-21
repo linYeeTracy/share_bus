@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import api from '../../axios.js'
+// import api from '../../axios.js'
 
 export default {
     data(){

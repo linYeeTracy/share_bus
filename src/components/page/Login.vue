@@ -16,7 +16,7 @@
             </el-form> -->
             <el-tabs v-model="activeName">
                 <el-tab-pane label="登录" name="login">
-                    <el-form :model="loginForm" :rules="rules" label-width="100px" ref="loginForm">
+                    <el-form :model="loginForm" :rules="rules" label-width="80px" ref="loginForm">
                         <el-form-item label="用户名" prop="username">
                             <el-input v-model="loginForm.username"></el-input>
                         </el-form-item>
@@ -40,115 +40,80 @@
 </template>
 
 <script>
+    import api from 'api/http'
+    import Register from './Register'
 
-    import api from '../../axios.js'
-    //引入验证组件
-    import Register from './Register.vue'
-
-    // export default {
-    //     data: function(){
-    //         return {
-    //             ruleForm: {
-    //                 username: '',
-    //                 password: ''
-    //             },
-    //             rules: {
-    //                 username: [
-    //                     { required: true, message: '请输入用户名', trigger: 'blur' }
-    //                 ],
-    //                 password: [
-    //                     { required: true, message: '请输入密码', trigger: 'blur' }
-    //                 ]
-    //             }
-    //         }
-    //     },
-    //     methods: {
-    //         submitForm(formName) {
-    //             const self = this;
-    //             self.$refs[formName].validate((valid) => {
-    //                 if (valid) {
-    //                     localStorage.setItem('ms_username',self.ruleForm.username);
-    //                     // 此处进行校验，若校验成功，则跳转
-    //                     self.$router.push('/index');
-    //                 } else {
-    //                     console.log('error submit!!');
-    //                     return false;
-    //                 }
-    //             });
-    //         }
-    //     }
-    // }
-    // export default {
-    //     data(){
-    //         return {
-    //             activeName: 'login', //选项卡
-    //             loginForm: {        //表单v-model的值
-    //                 username: '',
-    //                 password: ''
-    //             },
-    //             rules: { //验证规则
-    //                 username: [
-    //                     { required: true, message: '用户名不能少', trigger: 'blur'},
-    //                     { min: 6, max: 16, message: '用户名在6到16位之间', trigger: 'blur'}
-    //                 ],
-    //                 password: [
-    //                     { required: true, message: '请输入密码', trigger: 'blur'}
-    //                 ]
-    //             }
-    //         }
-    //     },
-    //     methods: {
-    //         resetForm(formName){
-    //             this.$refs[formName].resetFields();
-    //         },
-    //         submitForm(formName){
-    //             this.$refs[formName].validate((valid) => {
-    //                 if(valid){ //验证通过
-    //                     let opt = this.loginForm;
-    //                     api.userLogin(opt)
-    //                         .then(({ data }) => {     //解构赋值拿到data
-    //                             //账号不存在
-    //                             if(data.info === false){
-    //                                 this.$message({
-    //                                     type: 'info',
-    //                                     message: '账号不存在'
-    //                                 });
-    //                                 return ;
-    //                             }
-    //                             //账号存在
-    //                             if(data.success){
-    //                                 this.$message({
-    //                                     type: 'success',
-    //                                     message: '登录成功'
-    //                                 })
-    //                                 let token = data.token;
-    //                                 let username = data.username;
-    //                                 this.$store.dispatch('UserLogin', token);
-    //                                 this.$store.dispatch('UserName', username);
-    //                                 //如果用户手动输入"/"那么会跳转到这里来，即this.$route.query.redirect有参数
-    //                                 let redirectUrl = decodeURIComponent(this.$route.query.redirect || '/');
-    //                                 //跳转到指定的路由
-    //                                 this.$router.push({
-    //                                     path: redirectUrl
-    //                                 });
-    //                             }else{
-    //                                 this.$message({
-    //                                     type: 'info',
-    //                                     message: '密码错误！'
-    //                                 });
-    //                             }
-    //                         });
-    //                 }else{ 
-    //                     //验证不通过
-    //                     return false;
-    //                 }
-    //             });
-    //         }
-    //     },
-    //     components: {
-    //         Register
-    //     }
-    // }
+    export default {
+        data: function(){
+            return {
+                activeName: 'login', //选项卡
+                loginForm: {        //表单v-model的值
+                    username: '',
+                    password: ''
+                },
+                rules: { //验证规则
+                    username: [
+                        { required: true, message: '用户名不能少', trigger: 'blur'},
+                        { min: 6, max: 16, message: '用户名在6到16位之间', trigger: 'blur'}
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'blur'}
+                    ]
+                }
+            }
+        },
+        components: {
+            Register
+        },
+        methods: {
+        resetForm(formName){
+            this.$refs[formName].resetFields();
+        },
+        submitForm(formName){
+            this.$refs[formName].validate((valid) => {
+                if(valid){ //验证通过
+                    let opt = this.loginForm;
+                    api.userLogin(opt).then(({ data }) => {     //解构赋值拿到data
+                        //账号不存在
+                        if(data.info === false){
+                            this.$message({
+                                type: 'info',
+                                message: '账号不存在'
+                            });
+                            return ;
+                        }
+                        //账号存在
+                        if(data.success){
+                            this.$message({
+                                type: 'success',
+                                message: '登录成功'
+                            })
+                            let token = data.token;
+                            let username = data.username;
+                            this.$store.dispatch('UserLogin', token);
+                            this.$store.dispatch('UserName', username);
+                            //如果用户手动输入"/"那么会跳转到这里来，即this.$route.query.redirect有参数
+                            // let redirectUrl = decodeURIComponent(this.$route.query.redirect || '/');
+                            let redirectUrl = '/readme';
+                            //跳转到指定的路由
+                            this.$router.push({
+                                path: redirectUrl
+                            });
+                        }else{
+                            this.$message({
+                                type: 'info',
+                                message: '密码错误！'
+                            });
+                        }
+                    });
+                    } else { 
+                        //验证不通过
+                        return false;
+                    }
+                });
+            }
+        },
+    }
 </script>
 
 <style scoped>
@@ -161,9 +126,9 @@
         position: absolute;
         top:50%;
         width:100%;
-        margin-top: -230px;
+        margin-top: -240px;
         text-align: center;
-        font-size:30px;
+        font-size:34px;
         color: #fff;
 
     }
@@ -171,10 +136,11 @@
         position: absolute;
         left:50%;
         top:50%;
-        width:300px;
-        height:160px;
-        margin:-150px 0 0 -190px;
+        width: 380px;
+        height: 270px;
+        margin:-175px 0 0 -230px;
         padding:40px;
+        text-align: center;
         border-radius: 5px;
         background: #fff;
     }
@@ -190,4 +156,5 @@
          line-height:30px;
          color:#999;
     }
+
 </style>
