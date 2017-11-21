@@ -94,7 +94,7 @@
                             this.$store.dispatch('UserName', username);
                             //如果用户手动输入"/"那么会跳转到这里来，即this.$route.query.redirect有参数
                             // let redirectUrl = decodeURIComponent(this.$route.query.redirect || '/');
-                            let redirectUrl = '/readme';
+                            let redirectUrl = '/viewBusLine';
                             //跳转到指定的路由
                             this.$router.push({
                                 path: redirectUrl

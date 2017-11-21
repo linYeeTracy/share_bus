@@ -61,5 +61,15 @@ export default {
     //删除用户
     delUser(data){
         return instance.post('/api/delUser', data);
+    },
+    /**
+     * --------------------班线定制模块------------------------------
+     */
+
+    /**
+     * 获取已拥有班线列表
+     */
+    getBusLine(data) {
+        return instance.get('../../static/linetable.json', data);
     }
 }

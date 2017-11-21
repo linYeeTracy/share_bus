@@ -1,6 +1,8 @@
 <template>
     <div class="sidebar">
-        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" theme="dark" unique-opened router>
+        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" theme="dark"
+        unique-opened 
+        router>
             <template v-for="item in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
@@ -25,12 +27,8 @@
             return {
                 items: [
                     {
-                        icon: 'el-icon-setting',
-                        index: 'readme',
-                        title: '自述'
-                    }, {
                         icon: 'el-icon-menu',
-                        index: '2',
+                        index: '1',
                         title: '班线管理',
                         subs: [
                             {
@@ -44,20 +42,17 @@
                         ]
                     }, {
                         icon: 'el-icon-menu',
-                        index: '3',
+                        index: '2',
                         title: '乘车管理',
                         subs: [
                             {
-                                index: 'busRoute',
-                                title: '乘车线路'
-                            }, {
                                 index: 'staffManage',
                                 title: '员工管理'
                             }
                         ]
                     }, {
                         icon: 'el-icon-menu',
-                        index: '4',
+                        index: '3',
                         title: '充值',
                         subs: [
                             {

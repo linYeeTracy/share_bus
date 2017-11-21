@@ -19,21 +19,19 @@
             
         </div>
         <div class="map-container">
-            <div class="custom-wrap">
+            <div class="stations-wrapper">
                 <div style="">
                     <el-table :data="stations" border style="width: 100%" ref="stationtable">
-                        <el-table-column type="selection"></el-table-column>
                         <el-table-column prop="name" label="站点名称">
                         </el-table-column>
                         <el-table-column prop="desc" label="站点备注">
                         </el-table-column>
-
                         <el-table-column label="操作" width="180">
                             <template slot-scope="scope">
                                 <el-button size="small"
-                                        @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                                        @click="editStation(scope.$index, scope.row)">编辑</el-button>
                                 <el-button size="small" type="danger"
-                                        @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                                        @click="delStation(scope.$index, scope.row)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -51,7 +49,11 @@
                 <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-scale>
                 <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
-                <bm-marker v-for="(station, index) in stations" :key="index" :index="index" :title="station.name" :position="station.pointer" :dragging="true" 
+                <bm-marker v-for="(station, index) in stations" 
+                    :key="index" :title="station.name" 
+                    :icon="{url: './../../assets/station.png', size: {width: 30, height: 30}}" 
+                    :position="station.pointer" 
+                    :dragging="true" 
                     @dragging="dragging(index, $event)"
                     @dragend="dragend">
                     <bm-label :content="station.name" :labelStyle="{color: 'red', fontSize : '18px'}" :offset="{width: -35, height: 30}"/>
@@ -142,6 +144,8 @@
 </template>
 
 <script>
+    import img_station from "../../assets/station.png";
+
     export default {
         data() {
             return {
@@ -281,10 +285,11 @@
             filterTag(value, row) {
                 return row.tag === value;
             },
-            handleEdit(index, row) {
+            // 编辑站点信息
+            editStation(index, row) {
                 this.$message('编辑第'+(index+1)+'行');
             },
-            handleDelete(index, row) {
+            delStation(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');
             },
             delAll(){
@@ -398,11 +403,13 @@
 .bm-view {
   height: 600px;
   margin-right: 420px;
+  box-shadow: 0 0 10px 3px #9cabb7;
 }
-.custom-wrap {
+.stations-wrapper {
     width: 400px;
     float: right;
     padding: 10px;
+    padding-top: 0;
     height: 100%;
 }
 .search-cont {

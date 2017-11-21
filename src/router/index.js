@@ -13,10 +13,6 @@ export default new Router({
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
                 {
-                    path: '/',
-                    component: resolve => require(['../components/page/Readme.vue'], resolve)
-                },
-                {
                     path: '/viewBusLine',
                     component: resolve => require(['../components/page/ViewBusLine.vue'], resolve)
                 },
