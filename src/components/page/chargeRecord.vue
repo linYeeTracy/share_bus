@@ -2,22 +2,41 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-menu"></i> 充值</el-breadcrumb-item>
-                <el-breadcrumb-item>充值记录</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-menu"></i> 充值中心</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="handle-box">
-            <el-button type="primary" icon="add" class="handle-del mr10" @click="recharge">充值</el-button>
-            <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        </div>
-        <el-table :data="staffData" border style="width: 100%" 
-            max-height="800"
-            ref="rechargeTable">
-            <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="order_time" label="充值日期"></el-table-column>
-            <el-table-column prop="order_num" label="充值流水号"></el-table-column>
-            <el-table-column prop="order_amount" label="充值金额"></el-table-column>
-        </el-table>
+        <el-card class="box-card assets-balance">
+            <div class="assets-head">账户余额</div>
+            <div class="assets-body">
+                <span class="amount-wrap"><strong class="amount">27999.00</strong>元</span>
+                <el-button type="primary" icon="add" class="recharge mr10" @click="recharge">充值</el-button>
+            </div>
+        </el-card>
+        
+
+        
+        <el-card class="box-card">
+            
+            <div slot="header" class="clearfix">
+                充值记录
+                <div class="search-wrapper">
+                    <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input"></el-input>
+                    <el-button type="primary" icon="search" @click="search">搜索</el-button>
+                </div>
+            </div>
+            <el-table :data="staffData" border style="width: 100%" 
+                max-height="800"
+                ref="rechargeTable">
+                <el-table-column type="selection"></el-table-column>
+                <el-table-column prop="order_time" label="充值日期"></el-table-column>
+                <el-table-column prop="order_num" label="充值流水号"></el-table-column>
+                <el-table-column prop="order_amount" label="充值金额"></el-table-column>
+            </el-table>
+        </el-card>
+        <!-- <div class="recharge-record">
+            div.
+            
+        </div> -->
 
         <!-- 点击查看站点的弹出框 -->
         <!-- <el-dialog 
@@ -56,6 +75,7 @@
                 select_word: '',
                 del_list: [],   
                 is_search: false,
+                keyword: '',
                 // 对话框
                 balanceDialogVisible: false
             }
@@ -172,11 +192,35 @@
 .handle-box{
     margin-bottom: 20px;
 }
-.handle-select{
-    width: 120px;
+.search-wrapper {
+    float: right;
+    margin-top: -8px;
 }
 .handle-input{
     width: 300px;
     display: inline-block;
+}
+.assets-balance {
+    margin-bottom: 20px;
+}
+.assets-balance .assets-head {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+.assets-balance .assets-body .amount-wrap {
+    /* float: left; */
+    display: inline-block;
+    
+}
+.assets-balance .assets-body .amount {
+    margin-left: 2px;
+    font-size: 24px;
+    
+    font-weight: 400;
+    margin-right: 5px;
+}
+.assets-balance .assets-body .recharge {
+    margin-left: 20px;
+    vertical-align: 6px;
 }
 </style>

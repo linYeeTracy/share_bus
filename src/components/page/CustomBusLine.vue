@@ -40,11 +40,7 @@
                 <bm-local-search class="search-cont"
                     :keyword="keyword" 
                     :auto-viewport="true" 
-                    :location="location" 
-                    @markersset="markersset"
-                    @infohtmlset="infohtmlset"
-                    @resultshtmlset="resultshtmlset"
-                    @searchcomplete="searchcomplete"></bm-local-search>
+                    :location="location"></bm-local-search>
 
                 <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
@@ -121,8 +117,9 @@
                 <el-button type="primary" @click="addStation">确 定</el-button>
             </span>
         </el-dialog>
+
         <!-- 填写班线属性 -->
-        <!-- <el-dialog 
+        <el-dialog 
             title="填写班线属性"
             :visible.sync="busLineAttrDialog"
             width="30%"
@@ -131,7 +128,10 @@
             <div class="form-box">
                 <el-form ref="busLineAttrForm" :model="busLineAttrForm" label-width="100px">
                     <el-form-item label="是否共享">
-                        <el-input v-model="busLineAttrForm.isShare"></el-input>
+                        <el-radio-group v-model="busLineAttrForm.isShare">
+                            <el-radio :label="1">共享</el-radio>
+                            <el-radio :label="2">不共享</el-radio>
+                        </el-radio-group>
                     </el-form-item>
                     <el-form-item label="最大载客人数">
                         <el-input v-model="busLineAttrForm.maxCarryNum"></el-input>
@@ -141,13 +141,14 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="busLineAttrDialog = false">取 消</el-button>
+                <el-button type="primary" @click="submitBusline">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import img_station from "../../assets/station.png";
+    import api from 'api/http';
 
     export default {
         data() {
@@ -177,11 +178,11 @@
                     pointer: {}
                 },
                 busLineAttrForm: {                      // 班线属性编辑窗口开关
-                    isShare: '',
+                    isShare: 2,
                     maxCarryNum: ''
                 },                                              
                 
-                currStation: {                          // 当前操作站点
+                currStation: {
                     name: '',
                     desc: ''
                 },
@@ -226,9 +227,6 @@
             },
             endStation() {
                 this.stations.length ? this.stations[this.stations - 1] : null;
-            },
-            currStation() {
-                return stations[currStation_index];
             }
         },
         methods: {
@@ -255,11 +253,7 @@
                 this.addStationDialog = false;
             },
 
-            // 站点拖拽事件
-            dragging(index, e) {
-                console.log(e)
-                this.stations[index].pointer = e.point;
-            },
+            
             getData(){
                 // let self = this;
                 // if(process.env.NODE_ENV === 'development'){
@@ -274,46 +268,31 @@
             },
             // 确认班线
             confirmLine() {
-                this.busLineAttr = true;
+                this.busLineAttrDialog = true;
             },
-            formatter(row, column) {
-                return row.address;
+            submitBusline() {
+                this.busLineAttrDialog = false;
+
+                api.addBusLine({cid: 1, busline: this.station}).then((res) => {
+
+                })
+                this.$Message.info('已成功提交');
             },
-            filterTag(value, row) {
-                return row.tag === value;
+            // 站点操作
+            dragend(e) {
+                let currPos = e.point;
+                // 后续操作待定
             },
-            // 编辑站点信息
+            dragging(index, e) {
+                this.stations[index].pointer = e.point;
+            },
             editStation(index, row) {
-                this.$message('编辑第'+(index+1)+'行');
+                console.log(arguments)
+                this.editStationDialog = true;
+                this.currStation = row;
             },
-            delStation(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
-            },
-           
-            infoWindowClose () {
-                this.show = false
-            },
-            infoWindowOpen () {
-                this.show = true
-            },
-            markersset(e) {
-                var self = this;
-                // for(let i =0;i<e.length;i++){
-                // $(e[i].marker.U).click(function(){
-                //     self.position.lng=e[i].point.lng;
-                //     self.position.lat=e[i].point.lat;
-                //     $('#bdcoordval').val(self.position.lng+","+self.position.lat);
-                // });
-                // }
-            },
-            infohtmlset(e) {
-                e.marker.Cb.content = '嘻嘻';                
-            },
-            resultshtmlset() {
-
-            },
-            searchcomplete() {
-
+            delStation(index) {
+                this.stations.splice(this.index, 1);
             },
             createStation(e) {
                 this.addStationDialog = true;
@@ -322,16 +301,8 @@
                     lat: e.point.lat
                 }
             },
-            dragend(e) {
-                let currPos = e.point;
-            },
             handleClose(done) {
                 done();
-                // this.$confirm('确认关闭？')
-                //     .then(_ => {
-                //         done();
-                //     })
-                //     .catch(_ => {});
             },
             onSubmit() {
                 this.$message.success('提交成功！');
@@ -348,26 +319,8 @@
                 this.stations.push(station);
                 this.addStationDialog = false;
             },
-            // editStation(index) {
-            //     this.editStationDialog = true;
-            //     this.currStation_index = index;
-            //     this.currStation = this.stations[index];
-            // },
-            delStation(index) {
-                this.stations.splice(this.index, 1);
-            },
-
         },
         watch:{
-            // linePath() {
-            //     var self = this;
-            //     var linePathArr = [];
-            //     this.$lodash.each(self.stations, (n, i) => {
-            //         linePathArr.push(n.pointer);
-            //     })
-            //     console.log(linePathArr)
-            //     return linePathArr;
-            // },
         }
     }
 </script>
@@ -406,7 +359,6 @@
     cursor: pointer;
     width: 80px;
     height: 80px;
-    line-height: 80px;
     border-radius: 50%;
     color: #fff;
     text-align: center;
@@ -422,7 +374,7 @@
     height: 30px;
     background: url('../../../static/img/add-line.png') no-repeat;
     background-size: 100%;
-    margin: 0 auto;
+    margin: 9px auto 0;
 }
 
 /* // .BMap_contextMenu {

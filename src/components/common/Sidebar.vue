@@ -52,14 +52,14 @@
                         ]
                     }, {
                         icon: 'el-icon-menu',
-                        index: '3',
-                        title: '充值',
-                        subs: [
-                            {
-                                index: 'chargeRecord',
-                                title: '充值记录'
-                            }
-                        ]
+                        index: 'chargeRecord',
+                        title: '充值中心',
+                        // subs: [
+                        //     {
+                        //         index: 'chargeRecord',
+                        //         title: '充值记录'
+                        //     }
+                        // ]
                     },
                     // {
                     //     icon: 'el-icon-menu',
