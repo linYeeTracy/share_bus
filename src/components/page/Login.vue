@@ -75,7 +75,6 @@
                     let opt = this.loginForm;
                     api.userLogin(opt).then(({ data }) => {     //解构赋值拿到data
                         //账号不存在
-                        console.log(data)
                         if(data.info === false){
                             this.$message({
                                 type: 'info',
@@ -84,15 +83,17 @@
                             return ;
                         }
                         //账号存在
-                        if(data.success){
+                        if(1){
                             this.$message({
                                 type: 'success',
                                 message: '登录成功'
                             })
-                            let token = data.token;
+                            let auth_token = data.auth_token;
                             let username = data.username;
-                            this.$store.dispatch('UserLogin', token);
+          
+                            this.$store.dispatch('UserLogin', auth_token);
                             this.$store.dispatch('UserName', username);
+
                             //如果用户手动输入"/"那么会跳转到这里来，即this.$route.query.redirect有参数
                             // let redirectUrl = decodeURIComponent(this.$route.query.redirect || '/');
                             let redirectUrl = '/viewBusLine';

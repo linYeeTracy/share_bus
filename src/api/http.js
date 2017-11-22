@@ -52,7 +52,7 @@ export default {
     },
     //用户登录
     userLogin(data){
-        return instance.post('haoyangtx.xyz:8888/test/', data); 
+        return instance.post('http://haoyangtx.xyz:8888/test/', data); 
     },
     //获取用户
     getUser(){

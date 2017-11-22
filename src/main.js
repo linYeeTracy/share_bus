@@ -5,6 +5,7 @@ import axios from 'axios';
 import ElementUI from 'element-ui';
 import BaiduMap from 'vue-baidu-map';
 import lodash from 'lodash';
+import store from './store';
 
 import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
@@ -21,5 +22,6 @@ Vue.prototype.$lodash = lodash;
 
 new Vue({
     router,
+    store,
     render: h => h(App)
 }).$mount('#app');
