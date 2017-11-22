@@ -73,7 +73,7 @@
         <el-dialog 
             title="编辑站点信息"
             :visible.sync="editStationDialog"
-            width="20%"
+            width="50%"
             :before-close="handleClose">
             <div class="form-box">
                 <el-form ref="stationEditForm" :model="currStation" label-width="100px">
@@ -95,7 +95,7 @@
         <el-dialog 
             title="新增站点"
             :visible.sync="addStationDialog"
-            width="30%">
+            width="50%">
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px">
                     <el-form-item label="站点名称">
@@ -122,7 +122,7 @@
         <el-dialog 
             title="填写班线属性"
             :visible.sync="busLineAttrDialog"
-            width="30%"
+            width="50%"
             :before-close="handleClose">
             
             <div class="form-box">

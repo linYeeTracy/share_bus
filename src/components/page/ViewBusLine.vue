@@ -48,7 +48,7 @@
         <el-dialog 
             title="查看站点"
             :visible.sync="stationDialogDis"
-            width="30%"
+            width="50%"
             :before-close="handleClose">
             <el-table :data="stationData" border style="width: 100%" ref="stationTable2">
                 <!-- <el-table-column type="selection"></el-table-column> -->

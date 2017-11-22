@@ -59,7 +59,7 @@
         height: 30px;
         vertical-align: middle;
         margin-right: 10px;
-        background: url('../../assets/backend-icon.png') no-repeat;
+        background: url('../../../static/img/backend.png') no-repeat;
         background-size: 100%;
     }
     .user-info {
