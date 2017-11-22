@@ -71,5 +71,23 @@ export default {
      */
     getBusLine(data) {
         return instance.get('../../static/linetable.json', data);
-    }
-}
+    },
+    /**
+     * 删除企业所选班线
+     */
+    delBusLine(data) {
+        return instance.delete('../../static/linetable.json', data);
+    },
+    /**
+     * 提交企业所选班线
+     */
+    addBusLine(data) {
+        return instance.post('/api/addBusline', data);
+    },
+    /**
+     * --------------------充值中心-------------------
+     */
+    getRechargeRocord(data) {
+        return instance.get('/api/getRechargeRocord', data);
+    },
+}   

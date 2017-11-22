@@ -8,15 +8,11 @@
         <el-card class="box-card assets-balance">
             <div class="assets-head">账户余额</div>
             <div class="assets-body">
-                <span class="amount-wrap"><strong class="amount">27999.00</strong>元</span>
+                <span class="amount-wrap"><strong class="amount">{{this.balance}}</strong>元</span>
                 <el-button type="primary" icon="add" class="recharge mr10" @click="recharge">充值</el-button>
             </div>
-        </el-card>
-        
-
-        
+        </el-card>  
         <el-card class="box-card">
-            
             <div slot="header" class="clearfix">
                 充值记录
                 <div class="search-wrapper">
@@ -32,11 +28,15 @@
                 <el-table-column prop="order_num" label="充值流水号"></el-table-column>
                 <el-table-column prop="order_amount" label="充值金额"></el-table-column>
             </el-table>
+            <div class="pagination">
+                <el-pagination
+                    @current-change ="handleCurrentChange"
+                    layout="prev, pager, next"
+                    :total="pageTotal">
+                </el-pagination>
+            </div>
         </el-card>
-        <!-- <div class="recharge-record">
-            div.
-            
-        </div> -->
+
 
         <!-- 点击查看站点的弹出框 -->
         <!-- <el-dialog 
@@ -61,31 +61,27 @@
 </template>
 
 <script>
+    import api from 'api/http';
+    
     export default {
         data() {
             return {
                 company_id: 'c_1',
-                rechargeUrl: './static/recharge.json',
                 rechargeData: [],
-                cur_page: 1,
-                cur_pageSize: 10,
+                pageNo: 1,
+                pageSize: 10,
+                pageTotal: 10,
                 money: 100,
-                multipleSelection: [],
-                select_cate: '',
-                select_word: '',
-                del_list: [],   
-                is_search: false,
                 keyword: '',
+                balance: 27000.00,
                 // 对话框
                 balanceDialogVisible: false
             }
         },
         created(){
             this.getRechargeData();
-
         },
         mounted() {
-
             this.money < 200 && this.$notify({
                 title: '警告',
                 message: '这是一条警告的提示消息',
@@ -122,58 +118,24 @@
             // }
         },
         methods: {
+            // 分页切换
             handleCurrentChange(val){
                 this.cur_page = val;
-                this.getData();
+                this.getRechargeData();
             },
-            // getData(){
-            //     let self = this;
-            //     if(process.env.NODE_ENV === 'development'){
-            //         // self.url = '/ms/busline';
-            //         self.lineUrl = './static/linetable.json';
-            //     };
-            //     self.$axios.get(self.lineUrl, {page:self.cur_page, pageSize: self.cur_pageSize}).then((res) => {
-            //         self.tableData = res.data.list;
-            //     })
-            // },
             getRechargeData(company_id) {
                 let self = this;
-                if(process.env.NODE_ENV === 'development'){
-                    self.staffUrl = './static/recharge.json';
-                };
-                this.$axios.get(self.staffUrl, {id: company_id}).then((res) => {
+                api.getRechargeData({id: company_id}).then((res) => {
                     self.rechargeData = res.data.list; 
                 })
             },
             search(){
-                this.is_search = true;
-            },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            checkStations(index, row, store) {
-                this.dialogVisible = true;
-                this.getStationData(row.id);
+                api.getRechargeData({id: company_id, keyword: this.keyword}).then((res) => {
+                    self.rechargeData = res.data.list; 
+                })
             },
             handleDelete(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');
-            },
-            delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
             },
             handleClose(done) {
                 this.$confirm('确认关闭？')
@@ -181,9 +143,7 @@
                         done();
                     })
                     .catch(_ => {});
-            },
-            addStaff() {},
-            delStaff() {}
+            }
         }
     }
 </script>
@@ -201,7 +161,8 @@
     display: inline-block;
 }
 .assets-balance {
-    margin-bottom: 20px;
+    margin-bottom: 20px;   
+    color: #666;     
 }
 .assets-balance .assets-head {
     margin-bottom: 20px;
