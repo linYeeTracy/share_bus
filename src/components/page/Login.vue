@@ -18,7 +18,7 @@
                 <el-tab-pane label="登录" name="login">
                     <el-form :model="loginForm" :rules="rules" label-width="80px" ref="loginForm">
                         <el-form-item label="用户名" prop="username">
-                            <el-input v-model="loginForm.username"></el-input>
+                            <el-input v-model="loginForm.name"></el-input>
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
                             <el-input v-model="loginForm.password" type="password"></el-input>
@@ -48,13 +48,13 @@
             return {
                 activeName: 'login', //选项卡
                 loginForm: {        //表单v-model的值
-                    username: '',
+                    name: '',
                     password: ''
                 },
                 rules: { //验证规则
-                    username: [
+                    name: [
                         { required: true, message: '用户名不能少', trigger: 'blur'},
-                        { min: 6, max: 16, message: '用户名在6到16位之间', trigger: 'blur'}
+                        { min: 5, max: 16, message: '用户名在6到16位之间', trigger: 'blur'}
                     ],
                     password: [
                         { required: true, message: '请输入密码', trigger: 'blur'}
@@ -75,6 +75,7 @@
                     let opt = this.loginForm;
                     api.userLogin(opt).then(({ data }) => {     //解构赋值拿到data
                         //账号不存在
+                        console.log(data)
                         if(data.info === false){
                             this.$message({
                                 type: 'info',
