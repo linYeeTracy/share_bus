@@ -21,10 +21,6 @@ export default new Router({
                     component: resolve => require(['../components/page/CustomBusLine.vue'], resolve)     // vue-datasource组件
                 },
                 {
-                    path: '/busRoute',
-                    component: resolve => require(['../components/page/BaseForm.vue'], resolve)
-                },
-                {
                     path: '/staffManage',
                     component: resolve => require(['../components/page/staffManage.vue'], resolve)    // Vue-Quill-Editor组件
                 },

@@ -42,14 +42,8 @@
                         ]
                     }, {
                         icon: 'el-icon-menu',
-                        index: '2',
-                        title: '乘车管理',
-                        subs: [
-                            {
-                                index: 'staffManage',
-                                title: '员工管理'
-                            }
-                        ]
+                        index: 'staffManage',
+                        title: '员工管理',
                     }, {
                         icon: 'el-icon-menu',
                         index: 'chargeRecord',

@@ -33,7 +33,7 @@
         </el-table>
 
         <!-- 点击查看站点的弹出框 -->
-        <!-- <el-dialog 
+        <el-dialog 
             title="余额管理"
             :visible.sync="dialogVisible"
             width="30%"
@@ -48,7 +48,7 @@
                 <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
     </div>
 
     
