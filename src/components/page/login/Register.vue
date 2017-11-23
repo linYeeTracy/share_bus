@@ -19,7 +19,7 @@
 </template>
 
 <script>
-// import api from '../../axios.js'
+import api from 'api/http'
 
 export default {
     data(){
@@ -73,17 +73,11 @@ export default {
                 if(valid){ //验证通过
                     api.userRegister(this.regForm)
                         .then(({ data }) => { 
-                            if(data.success){
-                                this.$message({
-                                    type: 'success',
-                                    message: '注册成功'
-                                });
-                            }else{
-                                this.$message({
-                                    type: 'info',
-                                    message: '用户名已经存在'
-                                });
-                            }
+                            this.$message({
+                                type: 'success',
+                                message: '注册成功'
+                            });
+                            this.$router.push('/viewBusline');
                         });
                 }else{ //验证不通过
                     return false;

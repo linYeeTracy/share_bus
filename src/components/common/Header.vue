@@ -4,8 +4,8 @@
         <div class="user-info">
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <img class="user-logo" src="../../../static/img/img.jpg">
-                    {{username}}
+                    <!-- <img class="user-logo" src="../../../static/img/img.jpg"> -->
+                    <span class="username">{{username}}</span>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="personal">个人设置</el-dropdown-item>
@@ -19,19 +19,19 @@
     export default {
         data() {
             return {
-                name: 'linxin'
+                name: ''
             }
         },
         computed:{
             username(){
-                let username = localStorage.getItem('ms_username');
+                let username = sessionStorage.getItem('username');
                 return username ? username : this.name;
             }
         },
         methods:{
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
+                    this.$store.dispatch('UserLogout');
                     this.$router.push('/login');
                 }
             }

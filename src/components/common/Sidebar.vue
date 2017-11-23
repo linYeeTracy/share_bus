@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" theme="dark"
+        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" background-color="#324157" text-color="#bfcbd9" active-text-color="#20a0ff"
         unique-opened 
         router>
             <template v-for="item in items">
