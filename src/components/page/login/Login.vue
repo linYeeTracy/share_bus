@@ -1,19 +1,7 @@
 <template>
     <div class="login-wrap"  ref='canvasWrap'>
-        <div class="ms-title">雅高企业班线系统</div>
+        <div class="ms-title">雅高班线定制</div>
         <div class="ms-login">
-            <!-- <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="demo-ruleForm">
-                <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="username"></el-input>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')"></el-input>
-                </el-form-item>
-                <div class="login-btn">
-                    <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
-            </el-form> -->
             <el-tabs id="loginTabs" v-model="activeName">
                 <el-tab-pane label="登录" name="login">
                     <el-form :model="loginForm" :rules="rules" label-width="80px" ref="loginForm">
@@ -23,7 +11,7 @@
                         <el-form-item label="密码" prop="password">
                             <el-input v-model="loginForm.password" type="password"></el-input>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item  label-width="0">
                             <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
                             <el-button @click="resetForm('loginForm')">重置</el-button>
                         </el-form-item>
@@ -122,7 +110,6 @@
                 });
             },
             initWave() {
-                console.log(THREE)
                 let self = this;
                 //111
                 var SEPARATION = 100, 
@@ -174,20 +161,17 @@
                         }
                     }
                     renderer = new THREE.CanvasRenderer();
-                    // renderer.setPixelRatio( window.devicePixelRatio );
+                    console.log(window.innerWidth, window.innerHeight)
                     renderer.setSize( window.innerWidth, window.innerHeight );
                     container.appendChild( renderer.domElement );
-                    renderer.setClearColor(0x324157);
-                    // renderer.setclearcolor(0x);
-                    // renderer.setClearAlpha(0);
-                    // stats = new Stats();
-                    // container.appendChild( stats.dom );
+
                     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
                     document.addEventListener( 'touchstart', onDocumentTouchStart, false );
                     document.addEventListener( 'touchmove', onDocumentTouchMove, false );
                     //
                     window.addEventListener( 'resize', onWindowResize, false );
                 }
+
                 function onWindowResize() {
                     windowHalfX = window.innerWidth / 2;
                     windowHalfY = window.innerHeight / 2;
@@ -198,7 +182,7 @@
                 //
                 function onDocumentMouseMove( event ) {
                     mouseX = event.clientX - windowHalfX;
-                    mouseY = event.clientY - windowHalfY;
+                    mouseY = event.clientY - windowHalfY - 400;
                 }
                 function onDocumentTouchStart( event ) {
                     if ( event.touches.length === 1 ) {
@@ -218,12 +202,12 @@
                 function animate() {
                     requestAnimationFrame( animate );
                     render();
-                    // stats.update();
                 }
                 function render() {
                     camera.position.x += ( mouseX - camera.position.x ) * .05;
                     camera.position.y += ( - mouseY - camera.position.y ) * .05;
                     camera.lookAt( scene.position );
+
                     var i = 0;
                     for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
                         for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
@@ -267,12 +251,14 @@
         left:50%;
         top:50%;
         width: 380px;
-        height: 270px;
-        margin:-175px 0 0 -230px;
-        padding:40px;
+        margin:-140px 0 0 -210px;
+        padding:20px;
         text-align: center;
         border-radius: 5px;
-        background: #fff;
+        background: rgba(255, 255, 255, .8);
+    }
+    .ms-login.register {
+   
     }
     .login-btn{
         text-align: center;

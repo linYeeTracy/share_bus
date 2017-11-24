@@ -26,8 +26,8 @@
 
             <el-table-column label="操作" fixed="right">
                 <template slot-scope="scope">
-                    <el-button size="small" @click="recharge(scope.$index, scope.row, scope.store)">信息修改</el-button>
-                    <el-button size="small" @click="managebalance(scope.$index, scope.row, scope.store)">余额管理</el-button>
+                    <el-button size="small" @click="manageStaffInfo(scope.$index, scope.row, scope.store)">信息管理</el-button>
+                    <el-button size="small" @click="manageBalance(scope.$index, scope.row, scope.store)">余额管理</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -35,18 +35,18 @@
         <!-- 余额管理 -->
         <el-dialog 
             title="余额管理"
-            :visible.sync="banlanceDialog"
+            :visible.sync="balanceDialog"
             width="30%"
             :before-close="handleClose">
             公司账户余额：179900
-            <el-form ref="banlanceForm" :model="banlanceForm" label-width="80px">
+            <el-form ref="balanceForm" :model="balanceForm" label-width="80px">
                 <el-form-item label="发放金额">
-                    <el-input v-model="banlanceForm.name"></el-input>
+                    <el-input v-model="balanceForm.name"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="banlanceDialogDis = false">取 消</el-button>
-                <el-button type="primary" @click="banlanceDialogDis = false">确 定</el-button>
+                <el-button @click="balanceDialog = false">取 消</el-button>
+                <el-button type="primary" @click="balanceDialog = false">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -56,17 +56,17 @@
             :visible.sync="staffDialog"
             width="30%"
             :before-close="handleClose">
-            <el-form ref="form" :model="staffInfoForm" label-width="80px">
+            <el-form ref="form" :model="staffForm" label-width="80px">
                 <el-form-item label="员工姓名">
-                    <el-input v-model="staffInfoForm.name"></el-input>
+                    <el-input v-model="staffForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="员工班线">
-                    <el-input type="textarea" v-model="staffInfoForm.busline"></el-input>
+                    <el-input type="textarea" v-model="staffForm.busline"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="staffDialogDis = false">取 消</el-button>
-                <el-button type="primary" @click="staffDialogDis = false">确 定</el-button>
+                <el-button @click="staffDialog = false">取 消</el-button>
+                <el-button type="primary" @click="staffDialog = false">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -81,67 +81,29 @@
                 company_id: 'c_1',
                 staffUrl: './static/staff.json',
                 staffData: [],
-                cur_page: 1,
-                cur_pageSize: 10,
+                pageNo: 1,
+                pageSize: 10,
+                pageTotal: 10,
                 multipleSelection: [],
-                select_cate: '',
-                select_word: '',
                 del_list: [],   
-                is_search: false,
                 // 对话框
-                balanceDialogVisible: false,
-                staffInfoForm: {
-
-                }
+                balanceDialog: false,
+                staffDialog: false,
+                staffForm: {},
+                balanceForm: {}
             }
         },
         created(){
             this.getStaffData();
         },
         computed: {
-            // staffData(){
-            //     const self = this;
-            //     // return self.tableData.filter(function(d){
-            //     //     console.log(d)
-            //     //     let is_del = false;
-            //     //     for (let i = 0; i < self.del_list.length; i++) {
-            //     //         if(d.name === self.del_list[i].name){
-            //     //             is_del = true;
-            //     //             break;
-            //     //         }
-            //     //     }
-            //     //     if(!is_del){
-            //     //         if(d.address.indexOf(self.select_cate) > -1 && 
-            //     //             (d.name.indexOf(self.select_word) > -1 ||
-            //     //             d.address.indexOf(self.select_word) > -1)
-            //     //         ){
-            //     //             return d;
-            //     //         }
-            //     //     }
-            //     // })
-            //     if(process.env.NODE_ENV === 'development'){
-            //         self.staffUrl = './static/staff.json';
-            //     };
-            //     this.$axios.get(self.staffUrl, {company: this.company_id}).then((res) => {
-            //         return res.data.list; 
-            //     })
-            // }
+ 
         },
         methods: {
             handleCurrentChange(val){
                 this.cur_page = val;
                 this.getData();
             },
-            // getData(){
-            //     let self = this;
-            //     if(process.env.NODE_ENV === 'development'){
-            //         // self.url = '/ms/busline';
-            //         self.lineUrl = './static/linetable.json';
-            //     };
-            //     self.$axios.get(self.lineUrl, {page:self.cur_page, pageSize: self.cur_pageSize}).then((res) => {
-            //         self.tableData = res.data.list;
-            //     })
-            // },
             getStaffData(line_id) {
                 let self = this;
                 if(process.env.NODE_ENV === 'development'){
@@ -153,16 +115,6 @@
             },
             search(){
                 this.is_search = true;
-            },
-            formatter(row, column) {
-                return row.address;
-            },
-            filterTag(value, row) {
-                return row.tag === value;
-            },
-            checkStations(index, row, store) {
-                this.dialogVisible = true;
-                this.getStationData(row.id);
             },
             handleDelete(index, row) {
                 this.$message.error('删除第'+(index+1)+'行');

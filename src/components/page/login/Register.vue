@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-form :model="regForm" :rules="rules" label-width="100px" ref="regForm">
+        <el-form :model="regForm" :rules="rules" label-width="80px" ref="regForm">
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="regForm.username"></el-input>
             </el-form-item>
@@ -10,10 +10,12 @@
             <el-form-item label="确认密码" prop="checkPassword">
                 <el-input v-model="regForm.checkPassword" type="password"></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item label-width="0">
                 <el-button type="primary" @click="submitForm('regForm')">注册</el-button>
                 <el-button @click="resetForm('regForm')" >重置</el-button>
             </el-form-item>
+
+            <p class="agreement-tip">点击「注册」按钮，即代表你同意<a href="/terms" target="_blank">《xxx协议》</a></p>
         </el-form>
     </div>
 </template>
@@ -89,5 +91,11 @@ export default {
 </script>
 
 <style scoped>
-    
+    .agreement-tip {
+        margin-top: 21px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        text-align: center;
+        color: #999;
+    }
 </style>
