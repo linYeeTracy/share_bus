@@ -31,24 +31,44 @@
                 </template>
             </el-table-column>
         </el-table>
-
-        <!-- 点击查看站点的弹出框 -->
-        <!-- <el-dialog 
+        
+        <!-- 余额管理 -->
+        <el-dialog 
             title="余额管理"
-            :visible.sync="dialogVisible"
+            :visible.sync="banlanceDialog"
             width="30%"
             :before-close="handleClose">
-            <el-table :data="stationData" border style="width: 100%" ref="banlanceTable">
-                <el-table-column type="selection"></el-table-column>
-                <el-table-column prop="id" label="站点id" sortable></el-table-column>
-                <el-table-column prop="name" label="站点名称"></el-table-column>
-                <el-table-column prop="locDesc" label="站点描述"></el-table-column>
-            </el-table>
+            公司账户余额：179900
+            <el-form ref="banlanceForm" :model="banlanceForm" label-width="80px">
+                <el-form-item label="发放金额">
+                    <el-input v-model="banlanceForm.name"></el-input>
+                </el-form-item>
+            </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button @click="banlanceDialogDis = false">取 消</el-button>
+                <el-button type="primary" @click="banlanceDialogDis = false">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
+
+        <!-- 员工信息修改 -->
+        <el-dialog 
+            title="员工信息修改"
+            :visible.sync="staffDialog"
+            width="30%"
+            :before-close="handleClose">
+            <el-form ref="form" :model="staffInfoForm" label-width="80px">
+                <el-form-item label="员工姓名">
+                    <el-input v-model="staffInfoForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="员工班线">
+                    <el-input type="textarea" v-model="staffInfoForm.busline"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="staffDialogDis = false">取 消</el-button>
+                <el-button type="primary" @click="staffDialogDis = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 
     
@@ -69,7 +89,10 @@
                 del_list: [],   
                 is_search: false,
                 // 对话框
-                balanceDialogVisible: false
+                balanceDialogVisible: false,
+                staffInfoForm: {
+
+                }
             }
         },
         created(){
