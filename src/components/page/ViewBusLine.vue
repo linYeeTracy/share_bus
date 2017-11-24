@@ -7,10 +7,10 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <el-button type="primary" icon="plus" class="busline-cus" @click="cusBusLine">定制班线</el-button>
-            <el-button type="primary" icon="delete" class="busline-del" @click="delBusLine">删除班线</el-button>
+            <el-button type="success" icon="el-icon-edit" class="busline-cus" @click="cusBusLine">定制班线</el-button>
+            <el-button type="danger" :disabled="isDel" icon="el-icon-delete" class="busline-del" @click="delBusLine">删除班线</el-button>
             <el-input v-model="queryBusline" placeholder="请输入要查询的班线" class="handle-input"></el-input>
-            <el-button type="primary" icon="search" @click="searchBusLine">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="searchBusLine">搜索</el-button>
         </div>
         <el-table style="width: 100%"
                 :data="data" 
@@ -38,9 +38,11 @@
         </el-table>
         <div class="pagination">
             <el-pagination
-                    @current-change ="handleCurrentChange"
-                    layout="prev, pager, next"
-                    :total="pageTotal">
+                :current-page="pageNo"
+                :page-sizes="[10, 20]"
+                :page-size="10"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="400">
             </el-pagination>
         </div>
 
@@ -50,20 +52,14 @@
             :visible.sync="stationDialogDis"
             width="50%"
             :before-close="handleClose">
-            <el-table :data="stationData" border style="width: 100%" ref="stationTable2">
+            <el-table :data="stationData" border style="width: 100%" ref="stationTable">
                 <!-- <el-table-column type="selection"></el-table-column> -->
-                <el-table-column prop="id" label="站点id" sortable></el-table-column>
+                <el-table-column type="index" width="50"></el-table-column>
                 <el-table-column prop="name" label="站点名称"></el-table-column>
                 <el-table-column prop="locDesc" label="站点描述"></el-table-column>
             </el-table>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="stationDialogDis = false">取 消</el-button>
-                <el-button type="primary" @click="stationDialogDis = false">确 定</el-button>
-            </span>
         </el-dialog>
     </div>
-
-    
 </template>
 
 <script>
@@ -92,6 +88,9 @@
                 const self = this;
                 // 执行相关过滤
                 return self.buslineData;
+            },
+            isDel() {
+                return this.selectedLines.length > 0 ? false : true;
             }
         },
         methods: {
@@ -101,14 +100,15 @@
             },
             getData(){
                 let self = this;
-                // if(process.env.NODE_ENV === 'development'){
-                //     // self.url = '/ms/busline';
-                //     self.lineUrl = './static/linetable.json';
-                // };
-                api.getBusLine({company_id: 1, page:self.pageNo, pageSize: self.pageSize}).then((res) => {
-                    self.buslineData = res.data.list;
+                this.$axios.get('/api/busline').then( (res) => {
+                    console.log(res)
+                    self.buslineData = res.data.buslines;
                     this.tBuslineLoading = false;
                 })
+                // api.getBusLine({company_id: 1, page:self.pageNo, pageSize: self.pageSize}).then((res) => {
+                //     self.buslineData = res.data.list;
+                //     this.tBuslineLoading = false;
+                // })
             },
             getStationData(line_id) {
                 let self = this;

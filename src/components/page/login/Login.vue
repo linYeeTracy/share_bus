@@ -6,10 +6,10 @@
                 <el-tab-pane label="登录" name="login">
                     <el-form :model="loginForm" :rules="rules" label-width="80px" ref="loginForm">
                         <el-form-item label="用户名" prop="name">
-                            <el-input v-model="loginForm.name"type="name"></el-input>
+                            <el-input v-model="loginForm.name"type="name" placeholder="请输入用户名"></el-input>
                         </el-form-item>
                         <el-form-item label="密码" prop="password">
-                            <el-input v-model="loginForm.password" type="password"></el-input>
+                            <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" @keyup.enter.native="submitForm('loginForm')"></el-input>
                         </el-form-item>
                         <el-form-item  label-width="0">
                             <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>

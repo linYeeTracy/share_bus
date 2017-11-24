@@ -70,7 +70,7 @@ export default {
      * 获取已拥有班线列表
      */
     getBusLine(data) {
-        return instance.get('../../static/linetable.json', data);
+        return instance.get('/api/busline', data);
     },
     /**
      * 删除企业所选班线

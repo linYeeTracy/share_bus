@@ -7,15 +7,17 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <el-button type="primary" icon="add" class="handle-del mr10" @click="addStaff">增加</el-button>
-            <el-button type="primary" icon="delete" class="handle-del mr10" @click="delStaff">删除</el-button>
+            <el-button type="success" icon="el-icon-edit"  @click="addStaff">增加人员</el-button>
+            <el-button type="danger" :disabled="isDel" icon="el-icon-delete" class="del-staff" @click="delStaff">删除人员</el-button>
             
-            <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
-            <el-button type="primary" icon="search" @click="search">搜索</el-button>
+            <el-input placeholder="请输入人员关键字" class="handle-input"></el-input>
+            <el-button type="primary" @click="search" icon="el-icon-search">搜索</el-button>
         </div>
+        <!-- 人员乘车信息列表 -->
         <el-table :data="staffData" border style="width: 100%" 
             max-height="800"
-            ref="staffTable">
+            @selection-change="handleSelectionChange"
+            ref="tStaff">
             <el-table-column type="selection"></el-table-column>
             <el-table-column prop="id" label="工号"></el-table-column>
             <el-table-column prop="name" label="姓名"></el-table-column>
@@ -31,9 +33,28 @@
                 </template>
             </el-table-column>
         </el-table>
-        
-        <!-- 余额管理 -->
+        <!-- 增加人员弹窗 -->
         <el-dialog 
+            title="上传人员表"
+            :visible.sync="addStaffDialog"
+            width="30%"
+            :before-close="handleClose">
+            <el-upload
+                class="upload-demo"
+                drag
+                action="https://jsonplaceholder.typicode.com/posts/"
+                multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">请上传人员excel表，支持xlsx格式，excel模板请在右侧下载</div>
+            </el-upload>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addStaffDialog = false">取 消</el-button>
+                <el-button type="primary" @click="addStaffDialog = false">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 余额管理 -->
+        <!-- <el-dialog 
             title="余额管理"
             :visible.sync="balanceDialog"
             width="30%"
@@ -48,10 +69,10 @@
                 <el-button @click="balanceDialog = false">取 消</el-button>
                 <el-button type="primary" @click="balanceDialog = false">确 定</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
 
         <!-- 员工信息修改 -->
-        <el-dialog 
+        <!-- <el-dialog 
             title="员工信息修改"
             :visible.sync="staffDialog"
             width="30%"
@@ -68,7 +89,7 @@
                 <el-button @click="staffDialog = false">取 消</el-button>
                 <el-button type="primary" @click="staffDialog = false">确 定</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 
     
@@ -78,17 +99,16 @@
     export default {
         data() {
             return {
-                company_id: 'c_1',
-                staffUrl: './static/staff.json',
                 staffData: [],
                 pageNo: 1,
                 pageSize: 10,
                 pageTotal: 10,
-                multipleSelection: [],
+                staffSelections: [],
                 del_list: [],   
                 // 对话框
                 balanceDialog: false,
                 staffDialog: false,
+                addStaffDialog: false,
                 staffForm: {},
                 balanceForm: {}
             }
@@ -97,41 +117,44 @@
             this.getStaffData();
         },
         computed: {
- 
+            isDel() {
+                return this.staffSelections.length ? false : true;
+            }
         },
         methods: {
             handleCurrentChange(val){
                 this.cur_page = val;
-                this.getData();
+                this.getStaffData();
             },
-            getStaffData(line_id) {
-                let self = this;
-                if(process.env.NODE_ENV === 'development'){
-                    self.staffUrl = './static/staff.json';
-                };
-                this.$axios.get(self.staffUrl, {id: line_id}).then((res) => {
-                    self.staffData = res.data.list; 
+            getStaffData() {
+                this.$axios.get('/api/getStaff').then((res) => {
+                    this.staffData = res.data.data; 
                 })
             },
             search(){
-                this.is_search = true;
+                this.getStaffData();
             },
-            handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+            addStaff() {
+                this.addStaffDialog = true;
+                // this.getStaffData();
             },
-            delAll(){
+            delStaff() {
+                this.$message({
+                    message: '删除成功',
+                    type: 'success'
+                });
                 const self = this,
-                    length = self.multipleSelection.length;
+                    length = self.staffSelections.length;
                 let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
+                self.del_list = self.del_list.concat(self.staffSelections);
                 for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
+                    str += self.staffSelections[i].name + ' ';
                 }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+                self.staffSelections = [];
+                this.getStaffData(); 
             },
             handleSelectionChange(val) {
-                this.multipleSelection = val;
+                this.staffSelections = val;
             },
             handleClose(done) {
                 this.$confirm('确认关闭？')
@@ -140,13 +163,17 @@
                     })
                     .catch(_ => {});
             },
-            addStaff() {},
-            delStaff() {}
         }
     }
 </script>
 
 <style scoped>
+.upload-demo {
+    text-align: center;
+}
+.del-staff {
+    margin-right: 15px;
+}
 .handle-box{
     margin-bottom: 20px;
 }

@@ -1,5 +1,5 @@
 <template>
-    <div> 
+    <div class="customBusline-wapper"> 
         <div class="add-new-busline" @click="confirmLine">
             <i class="addline-icon"></i>
             <p>确认添加</p>
@@ -11,12 +11,19 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
+            <div class="block">
+                <el-cascader
+                    :options="options"
+                    v-model="selectedOptions">
+                </el-cascader>
+            </div>
             <el-select v-model="selectCity" placeholder="筛选地区" @change="areaChange" class="handle-select">
                 <el-option key="1" label="南京市" value="南京市"></el-option>
                 <el-option key="2" label="上海市" value="上海市"></el-option>     
             </el-select>
-            <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input"></el-input>
+            <el-input v-model="keyword" placeholder="请输入地点" class="handle-input"></el-input>
         </div>
+        <!-- 地图区域 -->
         <div class="map-container">
             <div class="stations-wrapper">
                 <div style="">
@@ -36,12 +43,17 @@
                     </el-table>
                 </div>
             </div>
-            <baidu-map class="bm-view" :center="center" :zoom="zoom" :location="location" :scroll-wheel-zoom="scrollZoom" @ready="handler">
+            <baidu-map class="bm-view" 
+                :center="center" 
+                :zoom="zoom" 
+                :location="location" 
+                :scroll-wheel-zoom="scrollZoom" 
+                @ready="handler">
                 <bm-local-search class="search-cont"
                     :keyword="keyword" 
-                    :auto-viewport="true" 
-                    :location="location"></bm-local-search>
-
+                    :location="location"
+                    :pageCapacity="pageCapacity"
+                    :autoViewport="autoViewport"></bm-local-search>
                 <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
                 <bm-marker v-for="(station, index) in stations"
@@ -54,17 +66,12 @@
                     <bm-label :content="station.name" 
                         :labelStyle="{fontSize:'14px',border:'0',background:'#324157',color:'#fff',fontWeight:'500',borderRadius:'5px',padding:'2px 10px'}" 
                         :offset="{height: 32}"/>
-                    <!-- 标注的右键操作，待定 -->
-                    <!-- <bm-context-menu>
-                        <bm-context-menu-item :callback="editStation(index)" text="编辑站点"></bm-context-menu-item>
-                        <bm-context-menu-item :callback="delStation(index)" text="删除站点"></bm-context-menu-item>
-                    </bm-context-menu> -->
                 </bm-marker>
                 
                 <bm-context-menu>
                     <bm-context-menu-item :callback="createStation" text="创建站点"></bm-context-menu-item>
                 </bm-context-menu>
-                <!-- <bm-driving start="{lng:118.763733,lat:32.058028}" end="{lng:118.819212, lat:32.058824}" :auto-viewport="true" location="南京"></bm-driving> -->
+
                 <!-- <bm-driving v-if="stations.length" start="startStation.name" end="endStation.name" :auto-viewport="true" location="location"></bm-driving> -->
                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="3"></bm-polyline>
             </baidu-map>
@@ -138,7 +145,6 @@
                     </el-form-item>
                 </el-form>
             </div>
-
             <span slot="footer" class="dialog-footer">
                 <el-button @click="busLineAttrDialog = false">取 消</el-button>
                 <el-button type="primary" @click="submitBusline">确 定</el-button>
@@ -158,7 +164,41 @@
                 center: '南京市新街口',
                 zoom: 15,
                 scrollZoom: true,
-                keyword: '',                            // 地点查询关键字
+                keyword: '',    
+                options: [{
+                    value: 'zhinan',
+                    label: '指南',
+                    children: [{
+                        value: 'shejiyuanze',
+                        label: '设计原则',
+                        children: [{
+                            value: 'yizhi',
+                            label: '一致'
+                            }, {
+                            value: 'fankui',
+                            label: '反馈'
+                            }, {
+                            value: 'xiaolv',
+                            label: '效率'
+                            }, {
+                            value: 'kekong',
+                            label: '可控'
+                        }]
+                    }, {
+                        value: 'daohang',
+                        label: '导航',
+                        children: [{
+                            value: 'cexiangdaohang',
+                            label: '侧向导航'
+                            }, {
+                            value: 'dingbudaohang',
+                            label: '顶部导航'
+                        }]
+                    }]
+                }], 
+                pageCapacity: 5,
+                autoViewport: true,
+                selectedOptions: [],                      // 地点查询关键字
                 stations: [                             // 新增站点集合
                     // {
                     //     name: '1',
@@ -186,7 +226,8 @@
                     name: '',
                     desc: ''
                 },
-                currStation_index: 0                    // 当前操作站点索引
+                currStation_index: 0,                    // 当前操作站点索引
+                showRealRoute: false
             }
         },
         created(){
@@ -219,11 +260,16 @@
                 this.$lodash.each(self.stations, (n, i) => {
                     linePathArr.push(n.pointer);
                 })
-                console.log(linePathArr)
                 return linePathArr;
             },
             startStation() {
                 this.stations.length ? this.stations[0] : null;
+            },
+            startPointer() {
+                this.stations.length ? this.stations[0].pointer : null;
+            },
+            endPointer() {
+                this.stations.length ? this.stations[this.stations - 1].pointer : null;
             },
             endStation() {
                 this.stations.length ? this.stations[this.stations - 1] : null;
@@ -269,6 +315,7 @@
             // 确认班线
             confirmLine() {
                 this.busLineAttrDialog = true;
+                
             },
             submitBusline() {
                 this.busLineAttrDialog = false;
@@ -277,6 +324,7 @@
 
                 })
                 this.$Message.info('已成功提交');
+                this.showRealRoute = true;
             },
             // 站点操作
             dragend(e) {
@@ -287,7 +335,6 @@
                 this.stations[index].pointer = e.point;
             },
             editStation(index, row) {
-                console.log(arguments)
                 this.editStationDialog = true;
                 this.currStation = row;
             },
@@ -295,6 +342,7 @@
                 this.stations.splice(this.index, 1);
             },
             createStation(e) {
+                console.log(e)
                 this.addStationDialog = true;
                 this.form.pointer = {
                     lng: e.point.lng,
@@ -325,8 +373,10 @@
     }
 </script>
 
-<style scoped>
-
+<style scopeds>
+.customBusline-wapper {
+    height: 100%;
+}
 .handle-box{
     margin-bottom: 20px;
 }
@@ -337,10 +387,13 @@
     width: 300px;
     display: inline-block;
 }
+.map-container {
+    height: calc(100% - 145px);
+}
 .bm-view {
-  height: 600px;
+  height: 100%;
   margin-right: 420px;
-  box-shadow: 0 0 10px 3px #9cabb7;
+  box-shadow: 0 0 5px 1px #9cabb7;
 }
 .stations-wrapper {
     width: 400px;
@@ -348,12 +401,13 @@
     padding: 10px;
     padding-top: 0;
     height: 100%;
+    /* box-shadow: 0 0 4px 1px #9cabb7; */
 }
 .search-cont {
     position: absolute;
-    top: 140px;
+    top: 185px;
     left: 48px;
-    width: 270px;
+    width: 300px;
 }
 .add-new-busline {
     cursor: pointer;
@@ -367,6 +421,7 @@
     right: 50px;
     background: #20a0ff;
     box-shadow: 0 0 5px 3px #20a0ff;
+    z-index: 999;
 }
 .add-new-busline .addline-icon {
     display: inline-block;
@@ -377,12 +432,7 @@
     margin: 9px auto 0;
 }
 
-/* // .BMap_contextMenu {
-//     >div {
-//         padding: 6px!important;
-//         &:hover {
-//             background: rgb(32, 160, 255);
-//         }
-//     }  
-// } */
+.BMap_contextMenu >div {
+    padding: 6px!important; 
+} 
 </style>
