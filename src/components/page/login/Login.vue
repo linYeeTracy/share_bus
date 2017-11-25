@@ -28,7 +28,7 @@
 <script>
     import api from 'api/http'
     import Register from './Register'
-    import {mapState} from 'vuex'
+    import {mapMutations} from 'vuex'
     // import * as THREE from 'three'
     // import * as CanvasRenderer from './CanvasRenderer'
     // import * as Projector from './Projector'
@@ -85,8 +85,10 @@
                             let auth_token = data.auth_token;
                             let username = data.name;
                             // 设置token和用户名
-                            this.$store.dispatch('UserLogin', auth_token);
-                            this.$store.dispatch('UserName', this.loginForm.name);
+                            // this.$store.dispatch('UserLogin', auth_token);
+                            // this.$store.dispatch('UserName', this.loginForm.name); 
+                            this.setToken(auth_token);
+                            this.setUsername(name);
 
                             this.$refs[formName].resetFields();
                             //如果用户手动输入"/"那么会跳转到这里来，即this.$route.query.redirect有参数
@@ -109,6 +111,7 @@
                     }
                 });
             },
+            //初始化wave背景
             initWave() {
                 let self = this;
                 //111
@@ -221,7 +224,11 @@
                     renderer.render( scene, camera );
                     count += 0.1;
                 }
-            }
+            },
+            ...mapMutations({
+                setToken: 'LOGIN', 
+                setUsername: 'USERNAME'
+            })
         },
     }
 </script>

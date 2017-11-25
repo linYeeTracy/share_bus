@@ -7,6 +7,7 @@ import * as types from './types.js'
 //3.window.localStorage: 初始化的时候用localStorage来赋值，这种情况跟sessionStorage差不多。后台配合给长时间有效的token比较好,
 //如果token的有效期比较短，直接有sessionStorage比较好。
 
+// 每个mutation是个方法
 const mutations = {
     [types.LOGIN]: (state, data) => {
         //更改token的值
@@ -17,6 +18,7 @@ const mutations = {
         //登出的时候要清除token
         state.token = null;
         window.sessionStorage.removeItem('token');
+        window.sessionStorage.removeItem('username');
     },
     //这步可有可无，根据自己需求去写
     [types.USERNAME]: (state, data) => {

@@ -16,7 +16,6 @@
         <!-- 人员乘车信息列表 -->
         <el-table :data="staffData" border style="width: 100%" 
             max-height="800"
-            @selection-change="handleSelectionChange"
             ref="tStaff">
             <el-table-column type="selection"></el-table-column>
             <el-table-column prop="id" label="工号"></el-table-column>
@@ -33,6 +32,15 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div class="pagination">
+            <el-pagination
+                :current-page="pageNo"
+                :page-sizes="[10, 20]"
+                :page-size="10"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="400">
+            </el-pagination>
+        </div>
         <!-- 增加人员弹窗 -->
         <el-dialog 
             title="上传人员表"
@@ -54,25 +62,31 @@
             </span>
         </el-dialog>
         <!-- 余额管理 -->
-        <!-- <el-dialog 
+        <el-dialog 
             title="余额管理"
             :visible.sync="balanceDialog"
             width="30%"
             :before-close="handleClose">
-            公司账户余额：179900
+            <el-card class="box-card assets-balance">
+                <div class="assets-head">账户余额</div>
+                <div class="assets-body">
+                    <span class="amount-wrap"><strong class="amount">{{this.token }}</strong>元</span>
+                    <a href="javascript:;" @click="toRechargeRecord">余额不足？点我前去充值~</a>
+                </div>
+            </el-card> 
             <el-form ref="balanceForm" :model="balanceForm" label-width="80px">
                 <el-form-item label="发放金额">
-                    <el-input v-model="balanceForm.name"></el-input>
+                    <el-input v-model="balanceForm.balance"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="balanceDialog = false">取 消</el-button>
                 <el-button type="primary" @click="balanceDialog = false">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
 
         <!-- 员工信息修改 -->
-        <!-- <el-dialog 
+        <el-dialog 
             title="员工信息修改"
             :visible.sync="staffDialog"
             width="30%"
@@ -89,13 +103,15 @@
                 <el-button @click="staffDialog = false">取 消</el-button>
                 <el-button type="primary" @click="staffDialog = false">确 定</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
     </div>
 
     
 </template>
 
 <script>
+    import {mapGetters} from 'vuex'
+
     export default {
         data() {
             return {
@@ -103,9 +119,9 @@
                 pageNo: 1,
                 pageSize: 10,
                 pageTotal: 10,
-                staffSelections: [],
-                del_list: [],   
+                staffSelections: [],  
                 // 对话框
+                balance: 27000,
                 balanceDialog: false,
                 staffDialog: false,
                 addStaffDialog: false,
@@ -119,13 +135,17 @@
         computed: {
             isDel() {
                 return this.staffSelections.length ? false : true;
-            }
+            },
+            ...mapGetters([
+                'token',
+                'username'
+                ])
         },
         methods: {
-            handleCurrentChange(val){
-                this.cur_page = val;
-                this.getStaffData();
-            },
+            // handleCurrentChange(val){
+            //     this.cur_page = val;
+            //     this.getStaffData();
+            // },
             getStaffData() {
                 this.$axios.get('/api/getStaff').then((res) => {
                     this.staffData = res.data.data; 
@@ -136,33 +156,34 @@
             },
             addStaff() {
                 this.addStaffDialog = true;
-                // this.getStaffData();
+                this.getStaffData();
             },
             delStaff() {
                 this.$message({
                     message: '删除成功',
                     type: 'success'
                 });
-                const self = this,
-                    length = self.staffSelections.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.staffSelections);
-                for (let i = 0; i < length; i++) {
-                    str += self.staffSelections[i].name + ' ';
-                }
-                self.staffSelections = [];
                 this.getStaffData(); 
             },
             handleSelectionChange(val) {
                 this.staffSelections = val;
             },
             handleClose(done) {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        done();
-                    })
-                    .catch(_ => {});
+                done();
             },
+            manageStaffInfo(index, row, scope) {
+                console.log(arguments);
+                this.staffForm = row;
+                this.staffDialog = true;
+            },
+            manageBalance(index, row, scope) {
+                console.log(arguments);
+                this.balanceForm = row;
+                this.balanceDialog = true;
+            },
+            toRechargeRecord() {
+                this.$router.push('/chargeRecord');
+            }
         }
     }
 </script>
@@ -183,5 +204,24 @@
 .handle-input{
     width: 300px;
     display: inline-block;
+}
+
+.assets-balance {
+    margin-bottom: 20px;   
+    color: #666;     
+}
+.assets-balance .assets-head {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+.assets-balance .assets-body .amount-wrap {
+    display: inline-block;
+    
+}
+.assets-balance .assets-body .amount {
+    margin-left: 2px;
+    font-size: 24px;
+    font-weight: 400;
+    margin-right: 5px;
 }
 </style>
