@@ -72,7 +72,7 @@
                     <bm-context-menu-item :callback="createStation" text="创建站点"></bm-context-menu-item>
                 </bm-context-menu>
 
-                <!-- <bm-driving v-if="stations.length" start="startStation.name" end="endStation.name" :auto-viewport="true" location="location"></bm-driving> -->
+                <bm-driving v-if="stations.length > 1" :start="startPointer" :end="endPointer" :auto-viewport="true" location="location"></bm-driving>
                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="3"></bm-polyline>
             </baidu-map>
         </div>
@@ -159,6 +159,7 @@
     export default {
         data() {
             return {
+                Bmap: null,
                 selectCity: '南京市',
                 location: '南京',
                 center: '南京市新街口',
@@ -227,7 +228,7 @@
                     desc: ''
                 },
                 currStation_index: 0,                    // 当前操作站点索引
-                showRealRoute: false
+                showRealRoute: false,
             }
         },
         created(){
@@ -266,10 +267,11 @@
                 this.stations.length ? this.stations[0] : null;
             },
             startPointer() {
-                this.stations.length ? this.stations[0].pointer : null;
+                
+                return this.stations.length ? new this.Bmap.Point(this.stations[0].pointer.lng, this.stations[0].pointer.lat) : null;
             },
             endPointer() {
-                this.stations.length ? this.stations[this.stations - 1].pointer : null;
+                return this.stations.length ? new this.Bmap.Point(this.stations[this.stations.length - 1].pointer.lng, this.stations[this.stations.length - 1].pointer.lat) : null;
             },
             endStation() {
                 this.stations.length ? this.stations[this.stations - 1] : null;
@@ -281,6 +283,7 @@
                 this.location = this.location;
                 this.center = this.center;
                 this.zoom = 15;
+                this.Bmap = BMap;
             },
             areaChange (area) {
                 this.location = area;
