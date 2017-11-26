@@ -22,6 +22,7 @@
                 <el-option key="2" label="上海市" value="上海市"></el-option>     
             </el-select>
             <el-input v-model="keyword" placeholder="请输入地点" class="handle-input"></el-input>
+            <el-button type="success" :disabled="driveBtn" icon="el-icon-edit" class="busline-cus" @click="driveChange">{{driveBtnText}}</el-button>
         </div>
         <!-- 地图区域 -->
         <div class="map-container">
@@ -72,7 +73,7 @@
                     <bm-context-menu-item :callback="createStation" text="创建站点"></bm-context-menu-item>
                 </bm-context-menu>
 
-                <bm-driving v-if="stations.length > 1" :start="startPointer" :end="endPointer" :auto-viewport="true" location="location"></bm-driving>
+                <bm-driving v-if="showDriving" :start="startPointer" :end="endPointer" :auto-viewport="true" location="location"></bm-driving>
                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="3"></bm-polyline>
             </baidu-map>
         </div>
@@ -165,7 +166,9 @@
                 center: '南京市新街口',
                 zoom: 15,
                 scrollZoom: true,
-                keyword: '',    
+                keyword: '', 
+                showDriving: false,  
+                driveBtnText: '展示驾车路线', 
                 options: [{
                     value: 'zhinan',
                     label: '指南',
@@ -255,6 +258,9 @@
                     }
                 })
             },
+            driveBtn() {
+                return this.stations.length < 1;
+            },
             linePath() {
                 var self = this;
                 var linePathArr = [];
@@ -288,6 +294,10 @@
             areaChange (area) {
                 this.location = area;
                 this.center = area;
+            },
+            driveChange() {
+                this.showDriving = !this.showDriving;
+                this.driveBtnText = '展示驾车路线' ? '关闭驾车路线' : '展示驾车路线';
             },
             addStation() {
                 let station = {
