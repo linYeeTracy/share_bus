@@ -11,7 +11,7 @@
                 <el-input v-model="regForm.checkPassword" type="password"></el-input>
             </el-form-item>
             <el-form-item label-width="0">
-                <el-button type="primary" @click="submitForm('regForm')">注册</el-button>
+                <el-button type="primary" @click="register('regForm')">注册</el-button>
                 <el-button @click="resetForm('regForm')" >重置</el-button>
             </el-form-item>
 
@@ -70,7 +70,7 @@ export default {
         resetForm(formName){
             this.$refs[formName].resetFields();
         },
-        submitForm(formName){
+        register(formName){
             this.$refs[formName].validate((valid) => {
                 if(valid){ //验证通过
                     api.userRegister(this.regForm)
@@ -85,6 +85,25 @@ export default {
                     return false;
                 }
             });
+        },
+        validatePass: (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            } else {
+                if (this.regForm.checkPass !== '') {
+                    this.$refs.regForm.validateField('checkPass');
+                }
+                callback();
+            }
+        },
+        validatePass2 : (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.regForm.pass) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
         }
     }
 }

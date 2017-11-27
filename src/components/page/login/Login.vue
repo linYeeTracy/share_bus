@@ -2,7 +2,7 @@
     <div class="login-wrap"  ref='canvasWrap'>
         <div class="ms-title">雅高班线定制</div>
         <div class="ms-login">
-            <el-tabs id="loginTabs" v-model="activeName">
+            <el-tabs id="loginTabs" v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="登录" name="login">
                     <el-form :model="loginForm" :rules="rules" label-width="80px" ref="loginForm">
                         <el-form-item label="用户名" prop="name">
@@ -12,7 +12,7 @@
                             <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" @keyup.enter.native="submitForm('loginForm')"></el-input>
                         </el-form-item>
                         <el-form-item  label-width="0">
-                            <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
+                            <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
                             <el-button @click="resetForm('loginForm')">重置</el-button>
                         </el-form-item>
                     </el-form>
@@ -61,6 +61,9 @@
             Register
         },
         methods: {
+            handleClick(tab, event) {
+                this.$refs['loginForm'].resetFields();
+            },
             resetForm(formName){
                 this.$refs[formName].resetFields();
             },

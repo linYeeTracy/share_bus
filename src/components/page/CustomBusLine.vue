@@ -11,12 +11,10 @@
             </el-breadcrumb>
         </div>
         <div class="handle-box">
-            <div class="block">
-                <el-cascader
-                    :options="options"
-                    v-model="selectedOptions">
-                </el-cascader>
-            </div>
+            <el-cascader
+                :options="options"
+                v-model="selectedOptions">
+            </el-cascader>
             <el-select v-model="selectCity" placeholder="筛选地区" @change="areaChange" class="handle-select">
                 <el-option key="1" label="南京市" value="南京市"></el-option>
                 <el-option key="2" label="上海市" value="上海市"></el-option>     
@@ -395,6 +393,7 @@
 }
 .handle-select{
     width: 120px;
+    margin-right: 10px;
 }
 .handle-input{
     width: 300px;
