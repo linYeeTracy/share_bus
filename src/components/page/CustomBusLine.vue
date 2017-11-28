@@ -57,7 +57,7 @@
 
                 <bm-marker v-for="(station, index) in stations"
                     :key="index" :title="station.name" 
-                    :icon="{url: '../../../static/img/station.png', size: {width: 30, height: 30}}" 
+                    :icon="{url: 'http://120.55.47.237/icon/station.png', size: {width: 30, height: 30}}" 
                     :position="station.pointer" 
                     :dragging="true" 
                     @dragging="dragging(index, $event)"
@@ -71,7 +71,12 @@
                     <bm-context-menu-item :callback="createStation" text="创建站点"></bm-context-menu-item>
                 </bm-context-menu>
 
-                <bm-driving v-if="showDriving" :start="startPointer" :end="endPointer" :auto-viewport="true" location="location"></bm-driving>
+                <bm-driving v-if="showDriving" 
+                :start="startPointer" 
+                :end="endPointer" 
+                :auto-viewport="true" 
+                :waypoints="midPointers"></bm-driving>
+                location="location"></bm-driving>
                 <bm-polyline :path="linePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="3"></bm-polyline>
             </baidu-map>
         </div>
@@ -154,7 +159,7 @@
 
 <script>
     import api from 'api/http';
-
+    
     export default {
         data() {
             return {
@@ -257,7 +262,7 @@
                 })
             },
             driveBtn() {
-                return this.stations.length < 1;
+                return this.stations.length < 2;
             },
             linePath() {
                 var self = this;
@@ -267,9 +272,6 @@
                 })
                 return linePathArr;
             },
-            startStation() {
-                this.stations.length ? this.stations[0] : null;
-            },
             startPointer() {
                 
                 return this.stations.length ? new this.Bmap.Point(this.stations[0].pointer.lng, this.stations[0].pointer.lat) : null;
@@ -277,8 +279,15 @@
             endPointer() {
                 return this.stations.length ? new this.Bmap.Point(this.stations[this.stations.length - 1].pointer.lng, this.stations[this.stations.length - 1].pointer.lat) : null;
             },
-            endStation() {
-                this.stations.length ? this.stations[this.stations - 1] : null;
+            midPointers() {
+                var temp = [];
+                for(let i = 0; i < this.stations.length -1;i++) {
+                    if(i > 0 && i < this.stations.length) {
+                        temp.push(this.stations[i].pointer);
+                    }      
+                }
+                console.log(temp)
+                return temp;
             }
         },
         methods: {
@@ -295,7 +304,9 @@
             },
             driveChange() {
                 this.showDriving = !this.showDriving;
-                this.driveBtnText = '展示驾车路线' ? '关闭驾车路线' : '展示驾车路线';
+                console.log(this.driveBtnText)
+                this.driveBtnText = this.driveBtnText == '展示驾车路线' ? '关闭驾车路线' : '展示驾车路线';
+                console.log(this.driveBtnText)
             },
             addStation() {
                 let station = {
@@ -334,7 +345,7 @@
                 api.addBusLine({cid: 1, busline: this.station}).then((res) => {
 
                 })
-                this.$Message.info('已成功提交');
+                this.$message.info('已成功提交,等待平台审批');
                 this.showRealRoute = true;
             },
             // 站点操作
@@ -379,8 +390,6 @@
                 this.addStationDialog = false;
             },
         },
-        watch:{
-        }
     }
 </script>
 
@@ -398,9 +407,9 @@
 .handle-input{
     width: 300px;
     display: inline-block;
-}
+} 
 .map-container {
-    height: calc(100% - 145px);
+    height: calc(100% - 105px);
 }
 .bm-view {
   height: 100%;
@@ -417,7 +426,7 @@
 }
 .search-cont {
     position: absolute;
-    top: 185px;
+    top: 145px;
     left: 48px;
     width: 300px;
 }
@@ -432,7 +441,7 @@
     top: 90px;
     right: 50px;
     background: #20a0ff;
-    box-shadow: 0 0 5px 3px #20a0ff;
+    box-shadow: 0 0 3px 1px #20a0ff;
     z-index: 999;
 }
 .add-new-busline .addline-icon {

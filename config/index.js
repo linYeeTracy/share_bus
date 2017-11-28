@@ -9,6 +9,16 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: './',
         productionSourceMap: false,
+        proxyTable: {
+            '/api':{
+                target:'http://www.easy-mock.com/mock/5a0be5dc18895717df6041fc',
+                changeOrigin:true,
+                pathRewrite:{
+                    '^/api':''
+                }
+            }
+        },
+
         // Gzip off by default as many popular static hosts such as
         // Surge or Netlify already gzip all static assets for you.
         // Before setting to `true`, make sure to:

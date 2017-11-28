@@ -147,8 +147,12 @@
             //     this.getStaffData();
             // },
             getStaffData() {
-                this.$axios.get('/api/getStaff').then((res) => {
-                    this.staffData = res.data.data; 
+                // this.$axios.get('/api/getStaff').then((res) => {
+                //     this.staffData = res.data.data; 
+                // })
+
+                this.$axios.get('./static/staff.json').then((res) => {
+                    this.staffData = res.data.list; 
                 })
             },
             search(){

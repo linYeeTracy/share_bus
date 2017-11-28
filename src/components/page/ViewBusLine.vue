@@ -100,9 +100,14 @@
             },
             getData(){
                 let self = this;
-                this.$axios.get('/api/busline').then( (res) => {
+                // this.$axios.get('/api/busline').then( (res) => {
+                //     console.log(res)
+                //     self.buslineData = res.data.buslines;
+                //     this.tBuslineLoading = false;
+                // })
+                this.$axios.get('/static/linetable.json').then( (res) => {
                     console.log(res)
-                    self.buslineData = res.data.buslines;
+                    self.buslineData = res.data.list;
                     this.tBuslineLoading = false;
                 })
                 // api.getBusLine({company_id: 1, page:self.pageNo, pageSize: self.pageSize}).then((res) => {
@@ -115,7 +120,10 @@
                 if(process.env.NODE_ENV === 'development'){
                     self.stationUrl = './static/stationtable.json';
                 };
-                this.$axios.get(self.stationUrl, {id: line_id}).then((res) => {
+                // this.$axios.get(self.stationUrl, {id: line_id}).then((res) => {
+                //     self.stationData = res.data.list; 
+                // })
+                this.$axios.get('./static/stationtable.json', {id: line_id}).then((res) => {
                     self.stationData = res.data.list; 
                 })
             },
